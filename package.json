@@ -3,7 +3,8 @@
   "private": true,
   "description": "Personal site of Kazuho Shibuya, served from Cloudflare.",
   "scripts": {
-    "check": "python3 scripts/check-copy.py && html-validate public/index.html && playwright test",
+    "build": "python3 scripts/build.py",
+    "check": "python3 scripts/build.py && html-validate public/index.html && playwright test",
     "screenshots:update": "playwright test -g \"looks the same\" --update-snapshots",
     "deploy": "./deploy.sh"
   },
