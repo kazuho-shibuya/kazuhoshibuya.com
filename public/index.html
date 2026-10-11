@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kazuho Shibuya — Software Engineer</title>
+<meta name="description" content="Software Engineer at Ophelos | Backend · Python · Rails | LLM agents · Data ingestion · Distributed systems | 9+ yrs across fintech, startup + enterprise | London">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%23b8361e'/%3E%3Ctext x='16' y='21.5' font-family='Georgia,serif' font-size='15' fill='white' text-anchor='middle'%3EKS%3C/text%3E%3C/svg%3E">
+<link rel="preload" href="fonts/source-serif-4-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/source-sans-3-normal.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  @font-face { font-family: "Source Serif 4"; src: url("fonts/source-serif-4-normal.woff2") format("woff2"); font-weight: 200 900; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Source Serif 4"; src: url("fonts/source-serif-4-italic.woff2") format("woff2"); font-weight: 200 900; font-style: italic; font-display: swap; }
+  @font-face { font-family: "Source Sans 3"; src: url("fonts/source-sans-3-normal.woff2") format("woff2"); font-weight: 200 900; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Source Code Pro"; src: url("fonts/source-code-pro-normal.woff2") format("woff2"); font-weight: 200 900; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Noto Serif JP"; src: url("fonts/noto-serif-jp.woff2") format("woff2"); font-weight: 500; font-display: swap; }
+
+  :root {
+    --paper: #f8f5ee;
+    --ink: #1c2740;
+    --name: #1f3a64;
+    --soft: #4f5868;
+    --faint: #717a89;
+    --rule: #dad5c9;
+    --accent: #c8452c;
+    --sakura: #f2b8c6;
+    --sakura-deep: #e6889f;
+    --rose: #b8202e;
+    --rose-pale: #f7e9e9;
+    --gold: #d9a441;
+    --leaf: #4f7a4a;
+    --mono-bg: #eeeae0;
+    --wave: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2240%22%20height%3D%2220%22%20viewBox%3D%220%200%2040%2020%22%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%22-10%22%20r%3D%2220%22%20fill%3D%22%23f8f5ee%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%22-10%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%22-10%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%22-10%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%2220%22%20fill%3D%22%23f8f5ee%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%220%22%20r%3D%2220%22%20fill%3D%22%23f8f5ee%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%220%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%220%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%220%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2210%22%20r%3D%2220%22%20fill%3D%22%23f8f5ee%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2210%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2210%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2210%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%2220%22%20fill%3D%22%23f8f5ee%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2220%22%20r%3D%2220%22%20fill%3D%22%23f8f5ee%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2220%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2220%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2220%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2230%22%20r%3D%2220%22%20fill%3D%22%23f8f5ee%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2230%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2230%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2230%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3C%2Fsvg%3E");
+
+    --serif: "Source Serif 4", Georgia, serif;
+    --sans: "Source Sans 3", system-ui, -apple-system, sans-serif;
+    --mono: "Source Code Pro", ui-monospace, Menlo, monospace;
+    --jp: "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", serif;
+
+    --fs-label: 0.875rem;
+    --fs-small: 0.9375rem;
+    --fs-body: 1.125rem;
+    --fs-lead: 1.5rem;
+    --fs-title: 1.5rem;
+    --fs-focus: clamp(1.5rem, 1.1rem + 1.5vw, 2rem);
+    --fs-name: clamp(2.9rem, 1.6rem + 5.8vw, 6rem);
+    --fs-contact: clamp(1.6rem, 1rem + 2.8vw, 2.75rem);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #131a2a;
+      --ink: #e9e5da;
+      --name: #f2eee3;
+      --soft: #b4bbc9;
+      --faint: #8d95a6;
+      --rule: #273352;
+      --accent: #f08262;
+      --sakura: #d98da1;
+      --sakura-deep: #e9a4b6;
+      --rose: #d9535f;
+      --rose-pale: #2a2230;
+      --gold: #e2b25a;
+      --leaf: #7ea878;
+      --mono-bg: #1b2336;
+      --wave: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2240%22%20height%3D%2220%22%20viewBox%3D%220%200%2040%2020%22%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%22-10%22%20r%3D%2220%22%20fill%3D%22%23131a2a%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%22-10%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%22-10%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%22-10%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%2220%22%20fill%3D%22%23131a2a%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%220%22%20r%3D%2220%22%20fill%3D%22%23131a2a%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%220%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%220%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%220%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2210%22%20r%3D%2220%22%20fill%3D%22%23131a2a%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2210%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2210%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2210%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%2220%22%20fill%3D%22%23131a2a%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2220%22%20r%3D%2220%22%20fill%3D%22%23131a2a%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2220%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2220%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2220%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2230%22%20r%3D%2220%22%20fill%3D%22%23131a2a%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2230%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2230%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2230%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3C%2Fsvg%3E");
+      --wave-opacity: .16;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+  body { overflow-x: clip; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font: 400 var(--fs-body)/1.6 var(--sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  p, li, dd { text-wrap: pretty; }
+  h1, h2, h3 { text-wrap: balance; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 32px; }
+  [lang="ja"] { font-family: var(--jp); }
+  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  a { color: inherit; text-decoration: none; background: linear-gradient(var(--accent), var(--accent)) 0 100% / 100% 1px no-repeat; transition: background-size .25s ease, color .2s; }
+  a:hover { color: var(--accent); background-size: 100% 2px; }
+  a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 2px; }
+
+  .label { margin: 0; font: 500 var(--fs-label)/1.3 var(--mono); letter-spacing: 0.02em; color: var(--faint); }
+  .label::before { content: "// "; color: var(--accent); }
+
+  /* ---------- Hero ---------- */
+  .hero { position: relative; padding: 120px 0 96px; }
+  .hero::before {
+    content: ""; position: absolute; inset: -40px -40vw 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(30% 60% at 66% 35%, color-mix(in srgb, var(--sakura) 22%, transparent), transparent 70%);
+  }
+  .hero > * { position: relative; z-index: 2; }
+  .hero .label { color: var(--accent); }
+  .hero .label::before { color: var(--faint); }
+  .hero h1 {
+    font-family: var(--serif);
+    font-weight: 450;
+    font-size: var(--fs-name);
+    line-height: 1;
+    letter-spacing: -0.025em;
+    margin: 22px 0 0;
+    color: var(--name);
+    font-variation-settings: "opsz" 60;
+  }
+  .origin { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 22px; margin: 18px 0 0; color: var(--soft); font-size: var(--fs-body); }
+  .origin [lang="ja"] { font-size: 1.2em; letter-spacing: 0.08em; color: var(--name); }
+  .origin .route { font-family: var(--mono); font-size: var(--fs-small); color: var(--ink); }
+  .origin .route b { font-weight: 400; color: var(--accent); padding: 0 0.4em; }
+  .focus { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: var(--fs-focus); line-height: 1.35; margin: 40px 0 0; font-variation-settings: "opsz" 40; }
+  .focus { display: flex; flex-wrap: wrap; column-gap: 0.35em; }
+  .focus span { white-space: nowrap; }
+  .focus em { font-style: normal; color: var(--accent); margin-left: 0.35em; }
+  .facts { display: flex; flex-wrap: wrap; gap: 8px 28px; margin: 22px 0 0; padding: 0; list-style: none; color: var(--soft); font-size: var(--fs-small); }
+  .facts li { display: flex; align-items: baseline; gap: 10px; }
+  .facts li::before { content: ""; flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); transform: translateY(-2px); }
+  .links { display: flex; flex-wrap: wrap; gap: 12px 32px; margin: 40px 0 0; padding: 0; list-style: none; font-weight: 500; }
+
+  /* Seigaiha wave field */
+  .wave { position: absolute; inset: -40px -40vw 0; z-index: 1; pointer-events: none; opacity: var(--wave-opacity, .22); background: var(--wave) 0 0 / 40px 20px repeat;
+    -webkit-mask-image: radial-gradient(34% 95% at 68% 38%, #000 10%, transparent 72%); mask-image: radial-gradient(34% 95% at 68% 38%, #000 10%, transparent 72%); }
+
+  /* ---------- Sections ---------- */
+  section.block { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 20px 56px; padding: 80px 0; border-top: 1px solid var(--rule); }
+  section.block > .label { padding-top: 6px; position: sticky; top: 32px; align-self: start; }
+
+  .about p { margin: 0 0 1em; max-width: 62ch; color: var(--soft); }
+  .about p.lead { font-family: var(--serif); font-size: var(--fs-lead); line-height: 1.5; color: var(--ink); font-weight: 400; margin-bottom: 1.1em; font-variation-settings: "opsz" 24; }
+
+  ol.work { list-style: none; margin: 0; padding: 0; counter-reset: w; }
+  ol.work li { counter-increment: w; display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 8px 16px; padding: 28px 0; border-bottom: 1px solid var(--rule); }
+  ol.work li:first-child { padding-top: 0; }
+  ol.work li:last-child { border-bottom: 0; padding-bottom: 0; }
+  ol.work li::before { content: counter(w, decimal-leading-zero); grid-row: span 2; font-family: var(--mono); font-weight: 300; font-size: 1.75rem; line-height: 1.2; color: var(--accent); }
+  ol.work h3 { margin: 4px 0 0; font: 500 var(--fs-label)/1.3 var(--mono); color: var(--faint); }
+  ol.work p { margin: 0; max-width: 62ch; }
+
+  /* Experience as a route map */
+  .roles { position: relative; margin: 0; padding: 0; list-style: none; }
+  .zone { font: 500 var(--fs-label)/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; padding: 0 0 18px 44px; position: relative; }
+  .zone.ldn { color: var(--rose); }
+  .zone.tyo { color: var(--sakura-deep); padding-top: 22px; }
+  .zone.tyo::before { left: 11px; top: -2px; height: 17px; bottom: auto; transform-origin: 50% 0; transform: rotate(45deg); border-radius: 0 0 2px 2px; }
+  .zone.tyo::after { content: ""; position: absolute; left: -1px; top: 10px; bottom: 0; width: 4px; background: currentColor; }
+  .zone::before { content: ""; position: absolute; left: 11px; top: -2px; bottom: 0; width: 4px; background: currentColor; }
+  .zone.ldn::before { top: 4px; border-radius: 2px 2px 0 0; }
+  .role { position: relative; display: grid; grid-template-columns: 116px minmax(0, 1fr); gap: 6px 28px; padding: 0 0 40px 44px; }
+  .role::before { content: ""; position: absolute; left: var(--x, 11px); top: 0; bottom: 0; width: 4px; background: var(--line); }
+  .role::after { content: ""; position: absolute; left: calc(var(--x, 11px) - 4px); top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--paper); border: 3px solid var(--line); box-sizing: border-box; }
+  .role.ldn { --line: var(--rose); }
+  .role.tyo { --line: var(--sakura-deep); --x: -1px; }
+  .role.ldn:first-of-type::after { background: var(--line); box-shadow: 0 0 0 4px color-mix(in srgb, var(--line) 25%, transparent); }
+  .role:last-child { padding-bottom: 8px; }
+  .role:last-child::before { bottom: auto; height: 10px; }
+  .role.tyo:first-of-type::before, .zone.tyo::before { }
+  .role .when { margin: 0; color: var(--faint); font: 400 var(--fs-small)/1.5 var(--mono); padding-top: 4px; }
+  .role h3 { margin: 0; font-family: var(--serif); font-weight: 500; font-size: var(--fs-title); line-height: 1.3; letter-spacing: -0.01em; color: var(--name); font-variation-settings: "opsz" 24; }
+  .role h3 span { display: block; margin-top: 2px; color: var(--soft); font: 500 var(--fs-body)/1.4 var(--sans); letter-spacing: 0; }
+  .role .summary { margin: 10px 0 0; color: var(--soft); max-width: 62ch; }
+  .role details { margin-top: 12px; }
+  .role summary { cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 8px; font: 500 var(--fs-label)/1.3 var(--mono); color: var(--accent); padding: 6px 0; }
+  .role summary::-webkit-details-marker { display: none; }
+  .role summary::before { content: "+"; font-size: 1.1rem; transition: transform .2s ease; display: inline-block; width: 0.7em; }
+  .role details[open] summary::before { transform: rotate(45deg); }
+  .role details ul { margin: 10px 0 0; padding: 0 0 0 1.1em; max-width: 62ch; }
+  .role details li { margin: 0 0 8px; }
+  .role details li::marker { color: var(--accent); }
+  .role details[open] ul { animation: unfold .3s ease both; }
+
+  dl.stack { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 40px; margin: 0; }
+  dl.stack dt { font: 500 var(--fs-label)/1.3 var(--mono); color: var(--faint); margin-bottom: 8px; }
+  dl.stack dd { margin: 0; }
+
+  /* ---------- How this page is built ---------- */
+  .colophon .intro { margin: 0 0 28px; max-width: 62ch; color: var(--soft); }
+  .colophon .intro.note { margin: 28px 0 0; }
+  .motifs { margin: 32px 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 32px; }
+  .motifs li { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 14px; align-items: start; color: var(--soft); font-size: var(--fs-small); }
+  .motifs svg { width: 56px; height: 56px; }
+  .m-wave { width: 56px; height: 56px; border-radius: 4px; background: var(--wave) 0 0 / 28px 14px repeat; opacity: .9; }
+  .m-route path { fill: none; stroke-width: 3; stroke-linejoin: round; }
+  .m-route .m-tyo { stroke: var(--sakura-deep); }
+  .m-route .m-ldn { stroke: var(--rose); }
+  .m-route circle { fill: var(--paper); stroke: var(--ink); stroke-width: 2; }
+  .m-route .m-now { fill: var(--rose); stroke: var(--rose); }
+  .motifs b { display: block; color: var(--ink); font-weight: 500; font-size: var(--fs-body); margin-bottom: 2px; }
+
+  /* ---------- Contact ---------- */
+  .contact { padding: 88px 0 112px; border-top: 1px solid var(--rule); }
+  .contact .links { margin-top: 20px; }
+
+  /* ---------- Motion ---------- */
+  @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  @keyframes unfold { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+  .hero > *:not(.wave) { animation: rise .8s cubic-bezier(.2,.7,.2,1) both; }
+  .hero > *:nth-child(2) { animation-delay: .08s; }
+  .hero > *:nth-child(3) { animation-delay: .16s; }
+  .hero > *:nth-child(4) { animation-delay: .26s; }
+  .hero > *:nth-child(5) { animation-delay: .36s; }
+  .hero > *:nth-child(6) { animation-delay: .46s; }
+  .wave { animation: rise 1.6s ease both; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+
+  /* ---------- Small screens ---------- */
+  @media (max-width: 760px) {
+    .wrap { padding: 0 20px; }
+    .hero { padding: 64px 0 56px; }
+    .focus { margin-top: 30px; }
+    .about p.lead { font-size: 1.3rem; }
+    section.block { grid-template-columns: minmax(0, 1fr); gap: 20px; padding: 56px 0; }
+    section.block > .label { position: static; padding-top: 0; }
+    ol.work li { grid-template-columns: 44px minmax(0, 1fr); gap: 6px 12px; }
+    .role { grid-template-columns: minmax(0, 1fr); gap: 4px; padding-left: 36px; }
+    .zone { padding-left: 36px; }
+    .role .when { padding-top: 0; }
+    dl.stack, .specs, .motifs { grid-template-columns: minmax(0, 1fr); }
+    .flow { grid-template-columns: minmax(0, 1fr); }
+    .flow li::after { content: "↓"; right: auto; left: 0; top: auto; bottom: -14px; }
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+
+  <header class="hero">
+    <div class="wave" aria-hidden="true"></div>
+    <p class="label">Software Engineer at Ophelos · London</p>
+    <h1>Kazuho Shibuya</h1>
+    <p class="origin"><span lang="ja">渋谷 一帆</span><span class="route">Tokyo<b aria-hidden="true">→</b><span class="visually-hidden">to</span>London</span></p>
+    <p class="focus"><span>LLM agents<em>·</em></span><span>Data ingestion<em>·</em></span><span>Distributed systems</span></p>
+    <ul class="facts">
+      <li>Backend · Python · Rails</li>
+      <li>9+ yrs across fintech, startup + enterprise</li>
+    </ul>
+    <ul class="links">
+      <li><a href="mailto:k.shibuya.tech@gmail.com" title="k.shibuya.tech@gmail.com">Email</a></li>
+      <li><a href="https://www.linkedin.com/in/kazuho-shibuya">LinkedIn</a></li>
+      <li><a href="https://github.com/kazuho-shibuya">GitHub</a></li>
+    </ul>
+  </header>
+
+  <section class="block about" aria-labelledby="about">
+    <h2 class="label" id="about">About</h2>
+    <div>
+      <p class="lead">Software engineer at Ophelos, a UK fintech in the Intrum group with an AI-native debt-resolution platform. I work across the Python platform and the Rails monolith it replaces. For two years I have owned client data ingestion, from how a client's file becomes data the platform can act on through to a reconciled ledger, along with the reliability, observability and money-correctness work around it.</p>
+      <p>This year that has included making an LLM agent's output safe to save, shipping a voice-automation pilot end to end, and taking new clients live with the market's operations team. Earlier at Ophelos I led engineering for a European market launch and rebuilt background-job monitoring. I build with AI coding agents, from plans I write and review.</p>
+      <p>I have nine years across fintech, startups and enterprise software in the UK and Japan. Before Ophelos I spent six years in Tokyo, leading development of two products at a startup and building banking and insurance systems for enterprise clients.</p>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="work">
+    <h2 class="label" id="work">Selected work</h2>
+    <ol class="work">
+      <li>
+        <h3>LLMs in production</h3>
+        <p>Made the LLM agent that writes client import rules safe for production: past incidents replay as automatic tests, and every generated rule set is repaired or reported before it is saved.</p>
+      </li>
+      <li>
+        <h3>Voice automation</h3>
+        <p>Owned the implementation of a voice-automation calling pilot, built end to end in three weeks; real call batches ran on it.</p>
+      </li>
+      <li>
+        <h3>Client onboarding</h3>
+        <p>Replaced bespoke per-client import setup with a published format clients fill in themselves, removing one to two weeks of engineering from each onboarding. The team then built it into the product.</p>
+      </li>
+      <li>
+        <h3>Money correctness</h3>
+        <p>Stopped the same payment being counted twice in a ledger that cannot reverse a posting, by matching the incumbent system's own rule so both platforms agree.</p>
+      </li>
+    </ol>
+  </section>
+
+  <section class="block" aria-labelledby="experience">
+    <h2 class="label" id="experience">Experience</h2>
+    <ol class="roles"><li class="zone ldn">London</li>
+      <li class="role ldn">
+        <p class="when">Feb 2026 – present</p>
+        <div>
+          <h3>Software Engineer III <span>Ophelos</span></h3>
+          <p class="summary">Software engineer across Ophelos's greenfield collections platform (Python services, TypeScript frontends) and its Rails modular monolith. I own client data ingestion end to end and the production safety of the LLM agent in that path.</p>
+          <details>
+            <summary>Highlights</summary>
+            <ul>
+              <li>Made the LLM agent that writes client import rules safe for production: past incidents replay as automatic tests, and every generated rule set is repaired or reported before it is saved.</li>
+              <li>Owned the implementation of a voice-automation calling pilot, built end to end in three weeks; real call batches ran on it.</li>
+              <li>Replaced bespoke per-client import setup with a published format clients fill in themselves, removing one to two weeks of engineering from each onboarding. The team then built it into the product.</li>
+              <li>Stopped the same payment being counted twice in a ledger that cannot reverse a posting, by matching the incumbent system's own rule so both platforms agree.</li>
+              <li>Took new clients live on a new collections platform, agreeing the business rules directly with the market's operations team.</li>
+            </ul>
+          </details>
+        </div>
+      </li>
+      <li class="role ldn">
+        <p class="when">Jan 2024 – Feb 2026</p>
+        <div>
+          <h3>Software Engineer II <span>Ophelos</span></h3>
+          <p class="summary">Software engineer on Ophelos's Rails modular monolith, working on client data ingestion, reliability and observability for enterprise clients across European markets. Promoted to Software Engineer III in February 2026.</p>
+          <details>
+            <summary>Highlights</summary>
+            <ul>
+              <li>Redesigned background-job monitoring with frequency-bucketed metrics, alert routing and circuit-breaker batch handling, which cut the alert noise from batch failures.</li>
+              <li>Built dependency ordering for event-sourced ingestion pipelines, so related client files process correctly when they arrive out of order.</li>
+              <li>Built a hierarchical configuration system with cascading overrides that centralised scattered policy controls; the team reused the pattern for regulatory configurations.</li>
+              <li>Led engineering for a European market launch and wrote the onboarding playbook the team adopted as its standard.</li>
+              <li>Rolled out a content security policy across regions in stages.</li>
+            </ul>
+          </details>
+        </div>
+      </li>
+      <li class="zone tyo">Tokyo</li>
+      <li class="role tyo">
+        <p class="when">Sep 2021 – Jan 2024</p>
+        <div>
+          <h3>Lead Software Engineer <span>TENT, Inc.</span></h3>
+          <p class="summary">Lead engineer at a Tokyo startup, building two cloud-based products in a small engineering team.</p>
+          <details>
+            <summary>Highlights</summary>
+            <ul>
+              <li>Led development of Kauriru, a cloud-based rental marketplace (Rails, React, AWS), driving 4x growth in shops onboarded and 5x sales growth over 2 years.</li>
+              <li>Built and led development of ZAIKA, a cloud-based inventory management application with QR/RFID, expanding customer accounts 5x. Built a self-serve onboarding form that reduced per-company setup from 3 weeks to hours, eliminating around 100 hours of manual onboarding work.</li>
+              <li>Owned PR review, system architecture, and onboarding tooling end-to-end across the engineering team.</li>
+            </ul>
+          </details>
+        </div>
+      </li>
+      <li class="role tyo">
+        <p class="when">2022 – 2023</p>
+        <div>
+          <h3>Software Engineer (Freelance) <span>n, Inc.</span></h3>
+          <p class="summary">Freelance engagement alongside primary role at TENT.</p>
+          <details>
+            <summary>Highlights</summary>
+            <ul>
+              <li>Built marketing-application features in a four-person freelance team using Rails, GraphQL, Next.js, TypeScript, and Relay.</li>
+            </ul>
+          </details>
+        </div>
+      </li>
+      <li class="role tyo">
+        <p class="when">2017 – 2021</p>
+        <div>
+          <h3>Software Engineer <span>Groove Direction Inc.</span></h3>
+          <p class="summary">Software development for six enterprise client companies across insurance, banking, and B2B systems.</p>
+          <details>
+            <summary>Highlights</summary>
+            <ul>
+              <li>Shipped a banking insurance system used at counter operations (Spring Boot, Java, Azure) and a B2B IT sales web application (Vue.js, Spring Boot).</li>
+            </ul>
+          </details>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="block" aria-labelledby="stack">
+    <h2 class="label" id="stack">Stack</h2>
+    <dl class="stack">
+      <div><dt>Languages</dt><dd>Python, Ruby, TypeScript, Java</dd></div>
+      <div><dt>Frameworks</dt><dd>Ruby on Rails, FastAPI, Spring Boot, React</dd></div>
+      <div><dt>Data and messaging</dt><dd>PostgreSQL, MySQL, Redis, Sidekiq, Celery, RabbitMQ</dd></div>
+      <div><dt>Cloud and tooling</dt><dd>AWS, GCP, Docker, Datadog</dd></div>
+      <div><dt>Tools</dt><dd>Claude Code, Codex, GitHub, Cloudflare</dd></div>
+    </dl>
+  </section>
+
+
+<section class="block colophon" aria-labelledby="built">
+  <h2 class="label" id="built">How this page is built</h2>
+  <div>
+    <p class="intro">Built with Claude Code from plans I wrote and reviewed. One static HTML file on Cloudflare, no framework, no JavaScript, no tracking. Every sentence is copied from my LinkedIn profile, and a check runs before each deploy to confirm it still matches.</p>
+    <ul class="motifs">
+      <li><div class="m-wave" aria-hidden="true"></div><div><b>青海波, the wave pattern</b>Drawn by the page itself: concentric arcs, one pixel wide, tiled. A pattern Japan has used on textiles and ceramics for centuries.</div></li>
+      <li><svg viewBox="0 0 80 40" class="m-route"><path d="M8 32 H30 L46 16 H72" class="m-tyo"/><path d="M46 16 H72" class="m-ldn"/><circle cx="12" cy="32" r="4"/><circle cx="26" cy="32" r="4"/><circle cx="52" cy="16" r="4"/><circle cx="68" cy="16" r="4" class="m-now"/></svg><div><b>The route, Tokyo to London</b>The experience list borrows the London line-map grammar: one line, a circle per station, a 45° turn where the city changes.</div></li>
+    </ul>
+    <p class="intro note">The blue is 藍, the indigo a British chemist named "Japan Blue" in the 1870s. The type is Adobe's Source family; the kanji are set in Noto Serif JP, whose Latin letters come from the same Source Serif.</p>
+    <ul class="links"><li><a href="https://github.com/kazuho-shibuya/kazuhoshibuya.com">Source on GitHub</a></li></ul>
+  </div>
+</section>
+
+  <footer class="contact">
+    <p class="label">Contact</p>
+    <ul class="links">
+      <li><a href="mailto:k.shibuya.tech@gmail.com" title="k.shibuya.tech@gmail.com">Email</a></li>
+      <li><a href="https://www.linkedin.com/in/kazuho-shibuya">LinkedIn</a></li>
+      <li><a href="https://github.com/kazuho-shibuya">GitHub</a></li>
+    </ul>
+  </footer>
+
+</main>
+</body>
+</html>

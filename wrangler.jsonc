@@ -1,0 +1,9 @@
+{
+  "name": "kazuhoshibuya",
+  "compatibility_date": "2026-10-01",
+  "assets": { "directory": "./public" },
+  "routes": [
+    { "pattern": "kazuhoshibuya.com", "custom_domain": true },
+    { "pattern": "www.kazuhoshibuya.com", "custom_domain": true }
+  ]
+}

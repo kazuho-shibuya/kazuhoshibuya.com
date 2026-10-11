@@ -1,0 +1,14 @@
+{
+  "name": "kazuhoshibuya.com",
+  "private": true,
+  "description": "Personal site of Kazuho Shibuya, served from Cloudflare.",
+  "scripts": {
+    "check": "python3 scripts/check-copy.py && html-validate public/index.html && playwright test",
+    "screenshots:update": "playwright test -g \"looks the same\" --update-snapshots",
+    "deploy": "./deploy.sh"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.0",
+    "html-validate": "^11.16.2"
+  }
+}
