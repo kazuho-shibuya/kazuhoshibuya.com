@@ -182,11 +182,12 @@
   dl.stack dd { margin: 0; }
 
   /* ---------- How this page is built ---------- */
-  .colophon .intro { margin: 0 0 28px; max-width: 62ch; color: var(--soft); }
+  .colophon .intro { margin: 0; max-width: 62ch; color: var(--soft); }
+  .colophon .links { margin-top: 16px; }
   .colophon .intro.note { margin: 20px 0 0; }
   .colophon .motifs + .intro.note { margin-top: 28px; }
-  .motifs { margin: 32px 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; max-width: 62ch; }
-  .motifs li { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 14px; align-items: start; color: var(--soft); font-size: var(--fs-small); }
+  .motifs { margin: 40px 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; max-width: 62ch; }
+  .motifs li { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 16px; align-items: center; color: var(--soft); font-size: var(--fs-small); }
   .motifs svg { width: 56px; height: 56px; }
   .m-sail { padding: 6px; }
   .m-wave { width: 56px; height: 56px; border-radius: 4px; background: var(--wave) 0 0 / 28px 14px repeat; opacity: .9; }
@@ -329,15 +330,14 @@
 <section class="block colophon" aria-labelledby="built">
   <h2 class="label" id="built">How it's built</h2>
   <div>
-    <p class="intro">Built with Claude Code from plans I wrote and reviewed. One static HTML file on Cloudflare: no framework and no cookies. The scripts are small: the Email link copies the address, the button switches between light and dark, and Cloudflare adds a cookie-free visitor count. The words are built from my LinkedIn profile text at every deploy, and the page ships only after its browser tests pass.</p>
-    <ul class="motifs">
-      <li><div class="m-wave" aria-hidden="true"></div><div><b>青海波, the wave pattern</b>Drawn by the page itself: concentric arcs, one pixel wide, tiled. A pattern Japan has used on textiles and ceramics for centuries.</div></li>
-      <li><svg viewBox="0 0 80 40" class="m-route"><path d="M8 32 H30 L46 16 H72" class="m-tyo"/><path d="M46 16 H72" class="m-ldn"/><circle cx="12" cy="32" r="4"/><circle cx="26" cy="32" r="4"/><circle cx="52" cy="16" r="4"/><circle cx="68" cy="16" r="4" class="m-now"/></svg><div><b>The route, Tokyo to London</b>The experience list borrows the London line-map grammar: one line, a circle per station, a 45° turn where the city changes.</div></li>
-      <li><svg class="m-sail" aria-hidden="true"><use href="#sail"/></svg><div><b>帆, the sail</b>The mark is the 帆 in my name, 一帆, which means one sail. It floats on the same wave as the page.</div></li>
-    </ul>
-    <p class="intro note">The page is 藍 on 生成り, an unbleached off-white. 藍 is the indigo a British chemist named "Japan Blue" in the 1870s. 朱 vermilion marks links and numbers, because red is the colour both flags share. On the route, Tudor red is London and 桜 sakura is Tokyo.</p>
-    <p class="intro note">The type is Adobe's Source family. The kanji are set in Noto Serif JP, whose Latin letters come from the same Source Serif.</p>
+    <p class="intro">Built with Claude Code from plans I wrote and reviewed. The text is generated from my LinkedIn profile, and a change goes live only after browser and accessibility tests pass.</p>
     <ul class="links"><li><a href="https://github.com/kazuho-shibuya/kazuhoshibuya.com">Source on GitHub</a></li></ul>
+    <ul class="motifs">
+      <li><svg class="m-sail" aria-hidden="true"><use href="#sail"/></svg><div><b>帆, the sail</b>From my name, 一帆, which means one sail.</div></li>
+      <li><div class="m-wave" aria-hidden="true"></div><div><b>青海波, the waves</b>A Japanese pattern, drawn by the page.</div></li>
+      <li><svg viewBox="0 0 80 40" class="m-route"><path d="M8 32 H30 L46 16 H72" class="m-tyo"/><path d="M46 16 H72" class="m-ldn"/><circle cx="12" cy="32" r="4"/><circle cx="26" cy="32" r="4"/><circle cx="52" cy="16" r="4"/><circle cx="68" cy="16" r="4" class="m-now"/></svg><div><b>The route</b>My experience as a line from Tokyo to London.</div></li>
+    </ul>
+    <p class="intro note">The colours are 藍 indigo, which a British chemist named "Japan Blue", and 朱 vermilion.</p>
   </div>
 </section>
 
