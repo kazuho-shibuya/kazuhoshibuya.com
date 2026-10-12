@@ -44,6 +44,16 @@ class ParseTest(unittest.TestCase):
         with self.assertRaisesRegex(build.BuildError, "2. About"):
             build.parse(broken, london_companies={"Acme"})
 
+    def test_a_headline_without_five_parts_is_an_error(self):
+        broken = FIXTURE.replace("Engineer at Acme | ", "")
+        with self.assertRaisesRegex(build.BuildError, "5 parts"):
+            build.parse(broken, london_companies={"Acme"})
+
+    def test_a_stack_line_without_a_label_is_an_error(self):
+        broken = FIXTURE.replace("Languages: Go, Rust", "Go, Rust")
+        with self.assertRaisesRegex(build.BuildError, "Label: value"):
+            build.parse(broken, london_companies={"Acme"})
+
 
 class RenderTest(unittest.TestCase):
     def setUp(self):

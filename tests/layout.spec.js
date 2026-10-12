@@ -1,13 +1,36 @@
 const { test, expect } = require("@playwright/test");
 const { PNG } = require("pngjs");
-const { DESKTOP, TABLET, PHONE, SMALL_PHONE, open } = require("./helpers");
+const { DESKTOP, TABLET, PHONE, SMALL_PHONE, WIDTHS, open } = require("./helpers");
 
-for (const [name, viewport] of [
-  ["desktop", DESKTOP],
-  ["tablet", TABLET],
-  ["phone", PHONE],
-]) {
-  test(`${name}: the page cannot scroll sideways`, async ({ page }) => {
+// Runs in the page: the text of each element that takes more than one row.
+function wrappedText(elements) {
+  const rowsOf = (el) => {
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    const pieces = [...range.getClientRects()].filter((r) => r.width > 1 && r.height > 1).sort((a, b) => a.top - b.top);
+    let rows = 0;
+    let bottom = -Infinity;
+    for (const piece of pieces) {
+      // Pieces of one row overlap vertically even when their font sizes differ.
+      if (piece.top >= bottom - 1) rows += 1;
+      bottom = Math.max(bottom, piece.bottom);
+    }
+    return rows;
+  };
+  const visible = elements.filter((el) => el.getClientRects().length);
+  const wrapped = visible.filter((el) => rowsOf(el) > 1);
+  return wrapped.map((el) => el.textContent.trim().replace(/\s+/g, " ").slice(0, 50));
+}
+
+for (const [name, viewport] of WIDTHS) {
+  test(`${name} (${viewport.width}px): nothing marked data-one-line wraps`, async ({ page }) => {
+    await open(page, viewport);
+    expect(await page.locator("[data-one-line]").evaluateAll(wrappedText)).toEqual([]);
+  });
+}
+
+for (const [name, viewport] of WIDTHS) {
+  test(`${name} (${viewport.width}px): the page cannot scroll sideways`, async ({ page }) => {
     await open(page, viewport);
     const scrollX = await page.evaluate(() => {
       window.scrollTo(5000, 0);
@@ -47,19 +70,6 @@ test("phone: the focus line is three short lines with no dots", async ({ page })
   await expect(page.locator(".focus em").first()).toBeHidden();
 });
 
-for (const [name, viewport] of [
-  ["phone", PHONE],
-  ["small phone", SMALL_PHONE],
-]) {
-  test(`${name}: the top label with the sail stays on one line`, async ({ page }) => {
-    await open(page, viewport);
-    const lines = await page
-      .locator(".hero .label")
-      .evaluate((el) => Math.round(el.getBoundingClientRect().height / parseFloat(getComputedStyle(el).lineHeight)));
-    expect(lines).toBe(1);
-  });
-}
-
 test("the tab icon and the header mark are the sail", async ({ page }) => {
   await open(page, DESKTOP);
   await expect(page.locator('link[rel="icon"]')).toHaveAttribute("href", /^data:image\/svg\+xml,.*s-jib/);
@@ -68,16 +78,9 @@ test("the tab icon and the header mark are the sail", async ({ page }) => {
 
 test("desktop: every row in How it's built sits on one line", async ({ page }) => {
   await open(page, DESKTOP);
-  const rows = await page.locator(".decisions dd, .motifs p").evaluateAll((all) =>
-    all.map((el) => {
-      const range = document.createRange();
-      range.selectNodeContents(el);
-      const tops = new Set([...range.getClientRects()].map((r) => Math.round(r.top)));
-      return { text: el.textContent.trim().slice(0, 40), lines: tops.size };
-    }),
-  );
-  expect(rows.length).toBe(8);
-  expect(rows.filter((r) => r.lines !== 1)).toEqual([]);
+  const rows = page.locator(".decisions dd, .motifs p");
+  await expect(rows).toHaveCount(9);
+  expect(await rows.evaluateAll(wrappedText)).toEqual([]);
 });
 
 test("the footer carries the mark, the name and the source link", async ({ page }) => {
@@ -132,3 +135,36 @@ test.describe("the wave and the text", () => {
     });
   }
 });
+
+const SCALE = [14, 18, 24, 32];
+// Only these scale with the screen; everything else sits on a step of SCALE.
+const FLUID = { ".focus": [24, 32], h1: [46.4, 96] };
+
+// Runs in the page: each rendered text size off the scale, including text drawn by ::before.
+function offScaleSizes({ scale, fluid }) {
+  const px = (style) => Math.round(parseFloat(style.fontSize) * 10) / 10;
+  const allowed = (el, size) => {
+    const range = Object.entries(fluid).find(([selector]) => el.closest(selector));
+    if (range) return size >= range[1][0] && size <= range[1][1];
+    return scale.includes(size);
+  };
+  const hasText = (el) => [...el.childNodes].some((n) => n.nodeType === Node.TEXT_NODE && n.textContent.trim());
+  const hasDrawnText = (el) => /^"[^"]+"$|counter/.test(getComputedStyle(el, "::before").content);
+  const rendered = [...document.querySelectorAll("body *")].filter((el) => el.getClientRects().length && !el.closest(".visually-hidden"));
+  const off = [];
+  for (const el of rendered) {
+    const name = `${el.tagName.toLowerCase()}.${el.className}`;
+    const size = px(getComputedStyle(el));
+    if (hasText(el) && !allowed(el, size)) off.push(`${size}px: ${name} "${el.textContent.trim().slice(0, 30)}"`);
+    const drawn = px(getComputedStyle(el, "::before"));
+    if (hasDrawnText(el) && !scale.includes(drawn)) off.push(`${drawn}px: ${name}::before`);
+  }
+  return [...new Set(off)];
+}
+
+for (const [name, viewport] of WIDTHS) {
+  test(`${name} (${viewport.width}px): every text size is on the type scale`, async ({ page }) => {
+    await open(page, viewport);
+    expect(await page.evaluate(offScaleSizes, { scale: SCALE, fluid: FLUID })).toEqual([]);
+  });
+}

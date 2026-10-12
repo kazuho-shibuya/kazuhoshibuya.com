@@ -36,10 +36,8 @@
     --mono: "Source Code Pro", ui-monospace, Menlo, monospace;
     --jp: "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", serif;
 
-    --fs-label: 0.875rem;
-    --fs-small: 0.9375rem;
+    --fs-small: 0.875rem;
     --fs-body: 1.125rem;
-    --fs-lead: 1.5rem;
     --fs-title: 1.5rem;
     --fs-focus: clamp(1.5rem, 1.1rem + 1.5vw, 2rem);
     --fs-name: clamp(2.9rem, 1.6rem + 5.8vw, 6rem);
@@ -73,7 +71,7 @@
   a:hover { color: var(--accent); background-size: 100% 2px; }
   a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 2px; }
 
-  .label { margin: 0; font: 500 var(--fs-label)/1.3 var(--mono); letter-spacing: 0.02em; color: var(--faint); }
+  .label { margin: 0; font: 500 var(--fs-small)/1.3 var(--mono); letter-spacing: 0.02em; color: var(--faint); }
   .label::before { content: "// "; color: var(--accent); }
 
   /* ---------- Hero ---------- */
@@ -114,7 +112,7 @@
     font-variation-settings: "opsz" 60;
   }
   .origin { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 22px; margin: 18px 0 0; color: var(--soft); font-size: var(--fs-body); }
-  .origin [lang="ja"] { font-size: 1.2em; letter-spacing: 0.08em; color: var(--name); }
+  .origin [lang="ja"] { font-size: var(--fs-title); letter-spacing: 0.08em; color: var(--name); }
   .origin .route { font-family: var(--mono); font-size: var(--fs-small); color: var(--ink); }
   .origin .route b { font-weight: 400; color: var(--accent); padding: 0 0.4em; }
   .focus { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: var(--fs-focus); line-height: 1.35; margin: 40px 0 0; font-variation-settings: "opsz" 40; }
@@ -136,19 +134,19 @@
   section.block > .label { padding-top: 6px; position: sticky; top: 32px; align-self: start; }
 
   .about p { margin: 0 0 1em; max-width: 62ch; color: var(--soft); }
-  .about p.lead { font-family: var(--serif); font-size: var(--fs-lead); line-height: 1.5; color: var(--ink); font-weight: 400; margin-bottom: 1.1em; font-variation-settings: "opsz" 24; }
+  .about p.lead { font-family: var(--serif); font-size: var(--fs-title); line-height: 1.5; color: var(--ink); font-weight: 400; margin-bottom: 1.1em; font-variation-settings: "opsz" 24; }
 
   ol.work { list-style: none; margin: 0; padding: 0; counter-reset: w; }
   ol.work li { counter-increment: w; display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 8px 16px; padding: 28px 0; border-bottom: 1px solid var(--rule); }
   ol.work li:first-child { padding-top: 0; }
   ol.work li:last-child { border-bottom: 0; padding-bottom: 0; }
-  ol.work li::before { content: counter(w, decimal-leading-zero); grid-row: span 2; font-family: var(--mono); font-weight: 300; font-size: 1.75rem; line-height: 1.2; color: var(--accent); }
-  ol.work h3 { margin: 4px 0 0; font: 500 var(--fs-label)/1.3 var(--mono); color: var(--faint); }
+  ol.work li::before { content: counter(w, decimal-leading-zero); grid-row: span 2; font-family: var(--mono); font-weight: 300; font-size: var(--fs-title); line-height: 1.2; color: var(--accent); }
+  ol.work h3 { margin: 4px 0 0; font: 500 var(--fs-small)/1.3 var(--mono); color: var(--faint); }
   ol.work p { margin: 0; max-width: 62ch; }
 
   /* Experience as a route map */
   .roles { position: relative; margin: 0; padding: 0; list-style: none; }
-  .zone { font: 500 var(--fs-label)/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; padding: 0 0 18px 44px; position: relative; }
+  .zone { font: 500 var(--fs-small)/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; padding: 0 0 18px 44px; position: relative; }
   .zone.ldn { color: var(--rose); }
   .zone.tyo { color: var(--sakura-text); padding-top: 22px; }
   .zone.tyo::before { background: var(--sakura-deep); left: 11px; top: -2px; height: 17px; bottom: auto; transform-origin: 50% 0; transform: rotate(45deg); border-radius: 0 0 2px 2px; }
@@ -168,9 +166,9 @@
   .role h3 span { display: block; margin-top: 2px; color: var(--soft); font: 500 var(--fs-body)/1.4 var(--sans); letter-spacing: 0; }
   .role .summary { margin: 10px 0 0; color: var(--soft); max-width: 62ch; }
   .role details { margin-top: 12px; }
-  .role summary { cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 8px; font: 500 var(--fs-label)/1.3 var(--mono); color: var(--accent); padding: 6px 0; }
+  .role summary { cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 8px; font: 500 var(--fs-small)/1.3 var(--mono); color: var(--accent); padding: 6px 0; }
   .role summary::-webkit-details-marker { display: none; }
-  .role summary::before { content: "+"; font-size: 1.1rem; transition: transform .2s ease; display: inline-block; width: 0.7em; }
+  .role summary::before { content: "+"; font-size: var(--fs-body); transition: transform .2s ease; display: inline-block; width: 0.7em; }
   .role details[open] summary::before { transform: rotate(45deg); }
   .role details ul { margin: 10px 0 0; padding: 0 0 0 1.1em; max-width: 62ch; }
   .role details li { margin: 0 0 8px; }
@@ -178,13 +176,13 @@
   .role details[open] ul { animation: unfold .3s ease both; }
 
   dl.stack { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 40px; margin: 0; }
-  dl.stack dt { font: 500 var(--fs-label)/1.3 var(--mono); color: var(--faint); margin-bottom: 8px; }
+  dl.stack dt { font: 500 var(--fs-small)/1.3 var(--mono); color: var(--faint); margin-bottom: 8px; }
   dl.stack dd { margin: 0; }
 
   /* ---------- How this page is built ---------- */
   dl.decisions { display: grid; gap: 14px; margin: 0; }
   dl.decisions div { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 16px; align-items: baseline; }
-  dl.decisions dt { font: 500 var(--fs-label)/1.3 var(--mono); color: var(--faint); }
+  dl.decisions dt { font: 500 var(--fs-small)/1.3 var(--mono); color: var(--faint); }
   dl.decisions dd { margin: 0; color: var(--ink); }
   .motifs { margin: 36px 0 0; padding: 32px 0 0; border-top: 1px solid var(--rule); list-style: none; display: grid; gap: 14px; }
   .motifs li { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 16px; align-items: center; }
@@ -209,7 +207,7 @@
 
   /* ---------- Contact row ---------- */
   .links.contact { align-items: center; }
-  .copied { margin-left: 12px; font: 400 var(--fs-label)/1 var(--mono); color: var(--faint); }
+  .copied { margin-left: 12px; font: 400 var(--fs-small)/1 var(--mono); color: var(--faint); }
 
   /* ---------- Motion ---------- */
   @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
@@ -250,6 +248,10 @@
     .hero .label .city { display: none; }
   }
 
+  @media (max-width: 359px) {
+    footer.site .more { display: none; }
+  }
+
   /* ---------- Small screens ---------- */
   @media (max-width: 760px) {
     .wrap { padding: 0 20px; }
@@ -260,7 +262,7 @@
     .wave { inset: -40px -20px 0; -webkit-mask-image: radial-gradient(65% 30% at 100% 88%, #000 10%, transparent 75%), linear-gradient(to bottom, #000 70%, transparent 100%); -webkit-mask-composite: source-in; mask-image: radial-gradient(65% 30% at 100% 88%, #000 10%, transparent 75%), linear-gradient(to bottom, #000 70%, transparent 100%); mask-composite: intersect; }
     .focus { margin-top: 30px; flex-direction: column; row-gap: 2px; }
     .focus em { display: none; }
-    .about p.lead { font-size: 1.3rem; }
+    .about p.lead { font-size: var(--fs-body); }
     section.block { grid-template-columns: minmax(0, 1fr); gap: 20px; padding: 56px 0; }
     section.block > .label { position: static; padding-top: 0; }
     ol.work li { grid-template-columns: 44px minmax(0, 1fr); gap: 6px 12px; }
@@ -269,8 +271,7 @@
     .role .when { padding-top: 0; }
     dl.stack { grid-template-columns: minmax(0, 1fr); }
     dl.decisions div, .motifs li { grid-template-columns: 64px minmax(0, 1fr); gap: 12px; }
-    footer.site { flex-direction: column; align-items: flex-start; }
-    footer.site a { margin-left: 0; }
+    footer.site .place { display: none; }
   }
 </style>
 </head>
@@ -281,15 +282,15 @@
   <header class="hero">
     <div class="wave" aria-hidden="true"></div>
     <button class="theme" type="button" aria-label="Switch colour theme" hidden><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"/></svg><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><g stroke-width="2" stroke-linecap="round"><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></g></svg></button>
-    <p class="label"><svg class="mark" aria-hidden="true"><use href="#sail"/></svg>Software Engineer at Ophelos<span class="city">&nbsp;· London</span></p>
+    <p class="label" data-one-line><svg class="mark" aria-hidden="true"><use href="#sail"/></svg>Software Engineer at Ophelos<span class="city">&nbsp;· London</span></p>
     <h1>Kazuho Shibuya</h1>
-    <p class="origin"><span lang="ja">澁谷 一帆</span><span class="route">Tokyo<b aria-hidden="true">→</b><span class="visually-hidden">to</span>London</span></p>
+    <p class="origin" data-one-line><span lang="ja">澁谷 一帆</span><span class="route">Tokyo<b aria-hidden="true">→</b><span class="visually-hidden">to</span>London</span></p>
     <p class="focus"><span>LLM agents<em>·</em></span><span>Data ingestion<em>·</em></span><span>Distributed systems</span></p>
     <ul class="facts">
       <li>Backend · Python · Rails</li>
       <li>9+ yrs across fintech, startup + enterprise</li>
     </ul>
-    <ul class="links contact">
+    <ul class="links contact" data-one-line>
       <li><a href="https://www.linkedin.com/in/kazuho-shibuya">LinkedIn</a></li>
       <li><a href="https://github.com/kazuho-shibuya">GitHub</a></li>
       <li><a class="email" href="mailto:k.shibuya.tech@gmail.com" data-copy="k.shibuya.tech@gmail.com">Email</a><span class="copied" role="status" aria-live="polite"></span></li>
@@ -420,29 +421,28 @@
     </dl>
   </section>
 
+  <section class="block colophon" aria-labelledby="built">
+    <h2 class="label" id="built">How it's built</h2>
+    <div>
+      <dl class="decisions">
+        <div><dt>Source</dt><dd>Generated from the same file as my LinkedIn profile, so the two never disagree.</dd></div>
+        <div><dt>Quality</dt><dd>Nothing deploys until unit, browser and accessibility tests pass in three browsers.</dd></div>
+        <div><dt>Security</dt><dd>A strict Content Security Policy that allows only the page's own code, plus HSTS.</dd></div>
+        <div><dt>Stack</dt><dd>Static HTML · Python · Playwright · GitHub Actions · Cloudflare</dd></div>
+        <div><dt>Method</dt><dd>Built with Claude Code from plans I wrote and reviewed.</dd></div>
+      </dl>
+      <ul class="motifs">
+        <li><svg class="m-sail" aria-hidden="true"><use href="#sail"/></svg><p><b>帆, the sail</b> From my name, 一帆, “one sail”.</p></li>
+        <li><div class="m-wave" aria-hidden="true"></div><p><b>青海波, the waves</b> A Japanese pattern, drawn by the page.</p></li>
+        <li><svg viewBox="0 0 80 40" class="m-route" aria-hidden="true"><path d="M8 32 H30 L46 16 H72" class="m-tyo"/><path d="M46 16 H72" class="m-ldn"/><circle cx="12" cy="32" r="4"/><circle cx="26" cy="32" r="4"/><circle cx="52" cy="16" r="4"/><circle cx="68" cy="16" r="4" class="m-now"/></svg><p><b>The route</b> My experience as a line from Tokyo to London.</p></li>
+        <li><div class="m-colours" aria-hidden="true"><i></i><i></i></div><p><b>藍 and 朱, the colours</b> Indigo, named “Japan Blue” by a British chemist, and vermilion.</p></li>
+      </ul>
+    </div>
+  </section>
 
-<section class="block colophon" aria-labelledby="built">
-  <h2 class="label" id="built">How it's built</h2>
-  <div>
-    <dl class="decisions">
-      <div><dt>Source</dt><dd>Generated from the same file as my LinkedIn profile, so the two never disagree.</dd></div>
-      <div><dt>Quality</dt><dd>Nothing deploys until browser and accessibility tests pass in Chrome and Safari.</dd></div>
-      <div><dt>Stack</dt><dd>Static HTML · Python · Playwright · GitHub Actions · Cloudflare</dd></div>
-      <div><dt>Method</dt><dd>Built with Claude Code from plans I wrote and reviewed.</dd></div>
-    </dl>
-    <ul class="motifs">
-      <li><svg class="m-sail" aria-hidden="true"><use href="#sail"/></svg><p><b>帆, the sail</b> From my name, 一帆, “one sail”.</p></li>
-      <li><div class="m-wave" aria-hidden="true"></div><p><b>青海波, the waves</b> A Japanese pattern, drawn by the page.</p></li>
-      <li><svg viewBox="0 0 80 40" class="m-route"><path d="M8 32 H30 L46 16 H72" class="m-tyo"/><path d="M46 16 H72" class="m-ldn"/><circle cx="12" cy="32" r="4"/><circle cx="26" cy="32" r="4"/><circle cx="52" cy="16" r="4"/><circle cx="68" cy="16" r="4" class="m-now"/></svg><p><b>The route</b> My experience as a line from Tokyo to London.</p></li>
-      <li><div class="m-colours" aria-hidden="true"><i></i><i></i></div><p><b>藍 and 朱, the colours</b> Indigo, named “Japan Blue” by a British chemist, and vermilion.</p></li>
-    </ul>
-  </div>
-</section>
-
-
-  <footer class="site">
-    <span class="who"><svg class="mark" aria-hidden="true"><use href="#sail"/></svg>Kazuho Shibuya · London</span>
-    <a href="https://github.com/kazuho-shibuya/kazuhoshibuya.com">Source on GitHub</a>
+  <footer class="site" data-one-line>
+    <span class="who"><svg class="mark" aria-hidden="true"><use href="#sail"/></svg>Kazuho Shibuya<span class="place"> · London</span></span>
+    <a href="https://github.com/kazuho-shibuya/kazuhoshibuya.com" aria-label="Source on GitHub">Source<span class="more"> on GitHub</span></a>
   </footer>
 
 </main>
@@ -451,8 +451,12 @@
     link.addEventListener("click", async (event) => {
       if (!navigator.clipboard) return;
       event.preventDefault();
-      await navigator.clipboard.writeText(link.dataset.copy);
-      link.nextElementSibling.textContent = `Copied ${link.dataset.copy}`;
+      try {
+        await navigator.clipboard.writeText(link.dataset.copy);
+        link.nextElementSibling.textContent = `Copied ${link.dataset.copy}`;
+      } catch {
+        location.href = link.href;
+      }
     });
   }
   const root = document.documentElement;

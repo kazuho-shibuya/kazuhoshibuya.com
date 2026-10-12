@@ -53,10 +53,17 @@ def paragraphs(block):
 
 def parse(md, london_companies=LONDON_COMPANIES):
     headline = first_block(section(md, "1. Headline")).strip()
-    role, skills, focus, years, city = [p.strip() for p in headline.split("|")]
+    parts = [p.strip() for p in headline.split("|")]
+    if len(parts) != 5:
+        raise BuildError(f"the headline needs 5 parts separated by '|', found {len(parts)}")
+    role, skills, focus, years, city = parts
 
     about = paragraphs(first_block(section(md, "2. About")))
-    stack = [tuple(line.split(": ", 1)) for line in about[-1].splitlines()]
+    stack_lines = about[-1].splitlines()
+    unlabelled = [line for line in stack_lines if ": " not in line]
+    if unlabelled:
+        raise BuildError(f"stack lines need 'Label: value': {unlabelled}")
+    stack = [tuple(line.split(": ", 1)) for line in stack_lines]
 
     roles = []
     for title, company, dates, body in ROLE_HEADING.findall(section(md, "5. Experience")):
