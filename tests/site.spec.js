@@ -85,9 +85,8 @@ test("Email copies the address and says so", async ({ page, context, browserName
   expect(page.url()).not.toContain("mailto:");
 });
 
-// Desktop allows the faint edge of the wave under text: at most 8% change in any channel (20 of 255).
-// Tablet and phone allow none: there the wave is a strip above the text.
-for (const [name, viewport, limit] of [["desktop", DESKTOP, 20], ["tablet", TABLET, 0], ["phone", PHONE, 0]]) {
+// The wave may sit faintly behind text: at most 8% change in any colour channel (20 of 255), on every screen size.
+for (const [name, viewport, limit] of [["desktop", DESKTOP, 20], ["tablet", TABLET, 20], ["phone", PHONE, 20], ["small phone", { width: 360, height: 780 }, 20]]) {
   test(`${name}: the wave pattern behind the top text stays within ${limit} of 255`, async ({ page }) => {
     await open(page, viewport);
     // The boxes of the letters themselves, not of the full-width blocks that hold them.
@@ -114,6 +113,51 @@ for (const [name, viewport, limit] of [["desktop", DESKTOP, 20], ["tablet", TABL
       for (let p = 0; p < a.length; p++) worst = Math.max(worst, Math.abs(a[p] - b[p]));
     }
     expect(worst).toBeLessThanOrEqual(limit);
+  });
+}
+
+test("with reduced motion, nothing on the page moves", async ({ page }) => {
+  await open(page, DESKTOP);
+  await page.mouse.wheel(0, 2000);
+  const running = await page.evaluate(() => document.getAnimations().map((a) => a.animationName));
+  expect(running).toEqual([]);
+});
+
+test("with motion allowed, the wave drifts and the sections and route map animate on scroll", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.setViewportSize(DESKTOP);
+  await page.goto("/");
+  const names = await page.evaluate(() => [...new Set(document.getAnimations().map((a) => a.animationName))]);
+  expect(names).toContain("drift");
+  const scrollDriven = await page.evaluate(() => CSS.supports("animation-timeline: view()"));
+  if (scrollDriven) {
+    for (const name of ["reveal", "draw", "pop"]) expect(names).toContain(name);
+  }
+});
+
+for (const [name, viewport] of [["desktop", DESKTOP], ["phone", PHONE]]) {
+  test(`${name}: after scrolling to the bottom, every scroll animation has finished`, async ({ page }) => {
+    test.setTimeout(60_000);
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await page.setViewportSize(viewport);
+    await page.goto("/");
+    const supported = await page.evaluate(() => CSS.supports("animation-timeline: view()"));
+    test.skip(!supported, "this browser does not support scroll-driven animations");
+    const height = await page.evaluate(() => document.documentElement.scrollHeight);
+    // Scroll at a reading pace: scroll-driven animations update once per frame.
+    for (let y = 0; y <= height; y += 200) {
+      await page.evaluate((top) => window.scrollTo(0, top), y);
+      await page.waitForTimeout(100);
+    }
+    await page.waitForTimeout(300);
+    const unfinished = await page.evaluate(() =>
+      document
+        .getAnimations()
+        .filter((a) => a.timeline && !(a.timeline instanceof DocumentTimeline))
+        .filter((a) => a.effect.getComputedTiming().progress !== 1)
+        .map((a) => `${a.animationName} on ${a.effect.target?.className || a.effect.target?.tagName}${a.effect.pseudoElement || ""}`),
+    );
+    expect(unfinished).toEqual([]);
   });
 }
 
