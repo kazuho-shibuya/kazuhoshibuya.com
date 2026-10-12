@@ -5,6 +5,7 @@ const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
 const { DESKTOP, open } = require("./helpers");
+const { SIZE, showPreview } = require("../scripts/render-og");
 
 test("the only scripts are the theme choice, the page script and Cloudflare's visitor count", async ({ page }) => {
   await open(page, DESKTOP);
@@ -79,6 +80,25 @@ test("shared links show a 1200x630 preview image with alt text", async ({ page, 
   const colours = new Set();
   for (let i = 0; i < png.data.length; i += 4 * 97) colours.add(png.data.readUInt32BE(i));
   expect(colours.size, "a blank image has one colour").toBeGreaterThan(10);
+});
+
+// Runs in the page: the width of an element's text, since a heading block is as wide as its container.
+function textWidth(element) {
+  const range = document.createRange();
+  range.selectNodeContents(element);
+  return range.getBoundingClientRect().width;
+}
+
+test("in the link preview, the name spans most of the image so it stays readable at LinkedIn's 480px copy", async ({
+  page,
+  browserName,
+}) => {
+  test.skip(browserName !== "chromium", "public/og.png is rendered in Chrome only");
+  await open(page, SIZE);
+  await showPreview(page);
+  const nameWidth = await page.locator(".hero h1").evaluate(textWidth);
+  // The name spans about 0.49 of the image unscaled, so 0.7 fails if the 1.45x scale is lost.
+  expect(nameWidth / SIZE.width).toBeGreaterThan(0.7);
 });
 
 const PUBLIC = path.join(__dirname, "../public");
