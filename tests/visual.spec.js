@@ -26,6 +26,6 @@ test.describe("looks the same as the approved version", () => {
     await showPreview(page);
     const rendered = PNG.sync.read(await page.screenshot({ clip: { x: 0, y: 0, ...SIZE } }));
     const committed = PNG.sync.read(fs.readFileSync(path.join(__dirname, "../public/og.png")));
-    expect(Buffer.compare(rendered.data, committed.data), "public/og.png is stale: run npm run build").toBe(0);
+    expect(Buffer.compare(rendered.data, committed.data), "public/og.png is stale or Chrome changed: run npm run build").toBe(0);
   });
 });
