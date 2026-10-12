@@ -91,6 +91,19 @@ test("the footer carries the mark, the name and the source link", async ({ page 
   await expect(footer.locator("a")).toHaveAttribute("href", "https://github.com/kazuho-shibuya/kazuhoshibuya.com");
 });
 
+// The largest change in any colour channel between two screenshots, inside one box.
+function largestColourChange(a, b, box) {
+  let largest = 0;
+  for (let y = Math.max(0, box.y); y < Math.min(a.height, box.y + box.height); y++) {
+    for (let x = Math.max(0, box.x); x < Math.min(a.width, box.x + box.width); x++) {
+      const i = (y * a.width + x) * 4;
+      const change = Math.max(...[0, 1, 2].map((c) => Math.abs(a.data[i + c] - b.data[i + c])));
+      largest = Math.max(largest, change);
+    }
+  }
+  return largest;
+}
+
 test.describe("the wave and the text", () => {
   // The check hides the wave with an injected style, which the live Content Security Policy rightly blocks.
   test.use({ bypassCSP: true });
@@ -122,15 +135,7 @@ test.describe("the wave and the text", () => {
       const withWave = PNG.sync.read(await page.screenshot({ scale: "css" }));
       await page.addStyleTag({ content: ".wave, .hero::before { display: none !important; }" });
       const withoutWave = PNG.sync.read(await page.screenshot({ scale: "css" }));
-      let worst = 0;
-      for (const box of boxes) {
-        for (let y = Math.max(0, box.y); y < Math.min(withWave.height, box.y + box.height); y++) {
-          for (let x = Math.max(0, box.x); x < Math.min(withWave.width, box.x + box.width); x++) {
-            const i = (y * withWave.width + x) * 4;
-            for (let c = 0; c < 3; c++) worst = Math.max(worst, Math.abs(withWave.data[i + c] - withoutWave.data[i + c]));
-          }
-        }
-      }
+      const worst = Math.max(0, ...boxes.map((box) => largestColourChange(withWave, withoutWave, box)));
       expect(worst).toBeLessThanOrEqual(limit);
     });
   }

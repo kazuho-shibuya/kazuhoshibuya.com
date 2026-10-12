@@ -9,7 +9,8 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-TEMPLATE = ROOT / "src/template.html"
+SRC = ROOT / "src"
+TEMPLATE = SRC / "template.html"
 OUTPUT = ROOT / "public/index.html"
 HEADERS = ROOT / "public/_headers"
 SOURCE = ROOT.parent / "life-tracker/projects/career/artefacts/linkedin.md"
@@ -155,11 +156,23 @@ def bullet(roles, prefix):
     return esc(found[0])
 
 
+def include_files(template, folder=SRC):
+    def contents(match):
+        path = folder / match.group(1)
+        if not path.exists():
+            raise BuildError(f"the template includes {match.group(1)}, which is not in {folder.name}/")
+        return path.read_text().rstrip("\n")
+
+    return re.sub(r"\{\{include: (.+?)\}\}", contents, template)
+
+
 def render(template, data):
     page = template.replace("{{headline}}", esc(data["headline"]))
-    page = page.replace("{{role}}", esc(data["role"])).replace("{{city}}", esc(data["city"]))
+    page = page.replace("{{role}}", esc(data["role"]))
+    page = page.replace("{{city}}", esc(data["city"]))
     page = page.replace("{{focus}}", focus_html(data["focus"]))
-    page = page.replace("{{skills}}", esc(data["skills"])).replace("{{years}}", esc(data["years"]))
+    page = page.replace("{{skills}}", esc(data["skills"]))
+    page = page.replace("{{years}}", esc(data["years"]))
     page = page.replace("{{about}}", about_html(data["about"]))
     page = page.replace("{{experience}}", experience_html(data["roles"]))
     page = page.replace("{{stack}}", stack_html(data["stack"]))
@@ -214,7 +227,7 @@ def main():
         return 1
     try:
         data = parse(SOURCE.read_text())
-        page = render(TEMPLATE.read_text(), data)
+        page = render(include_files(TEMPLATE.read_text()), data)
         OUTPUT.write_text(page)
         HEADERS.write_text(headers_file(page))
     except BuildError as error:

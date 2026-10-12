@@ -9,7 +9,7 @@ My personal site, live at **[kazuhoshibuya.com](https://kazuhoshibuya.com)**: on
 ```mermaid
 flowchart LR
   A[LinkedIn text<br/>private repo] --> B[build.py]
-  T[src/template.html] --> B
+  T[src/: template, styles, scripts] --> B
   B --> P[public/index.html]
   B --> H[public/_headers]
   P --> C{npm run check<br/>lint · unit · HTML<br/>browser · a11y}
@@ -20,7 +20,8 @@ flowchart LR
 ```
 
 ```
-src/template.html          layout, styles and the text that belongs to the site itself
+src/template.html          the page's markup and the text that belongs to the site itself
+src/styles.css, *.js       styles and the two small scripts, written separately and inlined by the build
 scripts/build.py           fills the template from the LinkedIn text; writes public/index.html and public/_headers
 scripts/subset-jp-font.sh  rebuilds the Japanese font with only the characters the page uses
 public/                    the built page, its headers file and self-hosted fonts (generated, committed)
@@ -71,7 +72,7 @@ npm run format                                             # Ruff and Prettier
 | Change                 | Edit                                  | Then                                                                                |
 | ---------------------- | ------------------------------------- | ----------------------------------------------------------------------------------- |
 | Words                  | the LinkedIn text in the private repo | `./deploy.sh`                                                                       |
-| Layout, styles, design | `src/template.html`                   | `npm run build`; review the screenshots; `npm run screenshots:update` once approved |
+| Layout, styles, design | `src/template.html`, `src/styles.css` | `npm run build`; review the screenshots; `npm run screenshots:update` once approved |
 | Japanese text          | `src/template.html`                   | `scripts/subset-jp-font.sh`; a test fails if a character has no glyph               |
 | Build logic            | `scripts/build.py`                    | `npm run test:unit`                                                                 |
 

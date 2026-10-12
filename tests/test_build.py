@@ -118,17 +118,29 @@ class HeadersTest(unittest.TestCase):
                 build.headers_file(page)
 
 
+class IncludeTest(unittest.TestCase):
+    def test_an_include_is_replaced_by_the_file(self):
+        page = build.include_files("<style>\n{{include: styles.css}}\n</style>")
+        self.assertIn((ROOT / "src/styles.css").read_text().rstrip("\n"), page)
+        self.assertNotIn("{{include", page)
+
+    def test_an_include_of_a_missing_file_is_an_error(self):
+        with self.assertRaisesRegex(build.BuildError, "missing.css"):
+            build.include_files("{{include: missing.css}}")
+
+
 class CommittedPageTest(unittest.TestCase):
-    def test_every_fixed_line_of_the_template_reaches_the_committed_page_in_order(self):
-        """CI cannot rebuild without the private source, so this catches a template edit that was never built."""
+    def test_every_fixed_line_of_every_source_file_reaches_the_committed_page_in_order(self):
+        """CI cannot rebuild without the private source, so this catches a source edit that was never built."""
         page = (ROOT / "public/index.html").read_text()
-        position = 0
-        for line in (ROOT / "src/template.html").read_text().splitlines():
-            if not line.strip() or "{{" in line:
-                continue
-            found = page.find(line, position)
-            self.assertNotEqual(found, -1, f"run npm run build; public/index.html lacks: {line.strip()[:80]}")
-            position = found + len(line)
+        for source in ["template.html", "styles.css", "theme.js", "page.js"]:
+            position = 0
+            for line in (ROOT / "src" / source).read_text().splitlines():
+                if not line.strip() or "{{" in line:
+                    continue
+                found = page.find(line, position)
+                self.assertNotEqual(found, -1, f"run npm run build; public/index.html lacks this line of {source}: {line.strip()[:80]}")
+                position = found + len(line)
 
 
 if __name__ == "__main__":

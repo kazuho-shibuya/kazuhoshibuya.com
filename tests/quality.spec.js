@@ -11,7 +11,7 @@ test("the only scripts are the theme choice, the page script and Cloudflare's vi
   const all = await page.locator("script").evaluateAll((els) => els.map((s) => s.src || `inline: ${s.textContent.trim().slice(0, 60)}`));
   const ours = all.filter((s) => !s.startsWith("https://static.cloudflareinsights.com/beacon.min.js"));
   expect(ours, `scripts on the page: ${JSON.stringify(all)}`).toEqual([
-    expect.stringMatching(/^inline: try \{ const t = localStorage\.getItem\("theme"\)/),
+    expect.stringMatching(/^inline: try \{\s+const t = localStorage\.getItem\("theme"\)/),
     expect.stringMatching(/^inline: for \(const link of document\.querySelectorAll\("a\[data-copy\]"/),
   ]);
 });
