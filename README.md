@@ -78,7 +78,7 @@ npm run format                                             # Ruff and Prettier
 | Japanese text          | `src/template.html`                               | `scripts/subset-jp-font.sh`; a test fails if a character has no glyph               |
 | Build logic            | `scripts/build.py`                                | `npm run test:unit`                                                                 |
 
-Merge a PR into `main` to deploy: `main` is protected, so every change arrives through a PR whose checks passed. GitHub Actions then runs every check, deploys with `wrangler` using the `CLOUDFLARE_API_TOKEN` repository secret, waits for the new version, then runs the browser suite against the live site. LinkedIn and X cache the preview image, so after it changes, refresh it in LinkedIn's Post Inspector. Dependabot proposes dependency updates weekly.
+Merge a PR into `main` to deploy: `main` is protected, so every change arrives through a PR whose checks passed. GitHub Actions then runs every check, deploys with `wrangler` using the `CLOUDFLARE_API_TOKEN` repository secret, waits for the new version, then runs the browser suite against the live site. The preview image's address carries its fingerprint (`og.png?v=…`), so LinkedIn and X fetch a changed image instead of reusing their copy; LinkedIn's Post Inspector re-reads the page. Dependabot proposes dependency updates weekly.
 
 ## Licence
 
