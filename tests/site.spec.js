@@ -122,11 +122,11 @@ test("the route map has two London stations and three Tokyo stations", async ({ 
   await expect(page.locator(".role.tyo")).toHaveCount(3);
 });
 
-test("the only script of ours is the inline copy button script", async ({ page }) => {
+test("the only scripts are the copy button and Cloudflare's visitor count", async ({ page }) => {
   await open(page, DESKTOP);
-  // Cloudflare adds its own bot-detection script, served from /cdn-cgi/, for some visitors such as CI runners.
+  // Cloudflare injects its cookie-free Web Analytics beacon into some served pages; the page itself carries only the copy script.
   const all = await page.locator("script").evaluateAll((els) => els.map((s) => s.src || `inline: ${s.textContent.trim().slice(0, 60)}`));
-  const ours = all.filter((s) => !s.includes("/cdn-cgi/"));
+  const ours = all.filter((s) => !s.startsWith("https://static.cloudflareinsights.com/beacon.min.js"));
   expect(ours, `scripts on the page: ${JSON.stringify(all)}`).toEqual([expect.stringMatching(/^inline: for \(const button of document\.querySelectorAll\("button\.copy"/)]);
 });
 
