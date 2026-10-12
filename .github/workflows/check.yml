@@ -33,14 +33,12 @@ jobs:
       - name: Deploy to Cloudflare
         run: |
           if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
-            echo "::warning::CLOUDFLARE_API_TOKEN is not set; skipping deploy"
-            exit 0
+            echo "::error::CLOUDFLARE_API_TOKEN is empty or missing, so nothing was deployed"
+            exit 1
           fi
           npx wrangler deploy --config wrangler.jsonc
       - name: Wait for the new version to be live
-        if: env.CLOUDFLARE_API_TOKEN != ''
         run: scripts/wait-live.sh
       - run: npx playwright install --with-deps webkit
       - name: Check the live site
-        if: env.CLOUDFLARE_API_TOKEN != ''
         run: LIVE=1 npx playwright test --grep-invert "looks the same"
