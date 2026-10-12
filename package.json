@@ -3,11 +3,11 @@
   "private": true,
   "description": "Personal site of Kazuho Shibuya, served from Cloudflare.",
   "scripts": {
-    "build": "python3 scripts/build.py",
+    "build": "python3 scripts/build.py && node scripts/render-og.js",
     "test:unit": "python3 -m unittest discover tests",
     "lint": "uvx ruff@0.17.0 check scripts tests && uvx ruff@0.17.0 format --check scripts tests && prettier --check .",
     "format": "uvx ruff@0.17.0 format scripts tests && prettier --write .",
-    "check": "npm run lint && npm run test:unit && python3 scripts/build.py && html-validate public/index.html && playwright test",
+    "check": "npm run lint && npm run test:unit && npm run build && html-validate public/index.html && playwright test",
     "screenshots:update": "playwright test -g \"looks the same\" --project chrome --update-snapshots",
     "deploy": "./deploy.sh"
   },
