@@ -192,7 +192,10 @@ def csp_hash(code):
 
 def headers_file(page):
     """Cloudflare's _headers file: a strict policy that allows only this page's own inline code."""
-    with_attributes = re.findall(r"<style\s[^>]*>|<script\s(?![^>]*\bsrc=)[^>]*>", page, flags=re.IGNORECASE)
+    # A src script is not inline, and structured data never runs, so neither needs a hash.
+    with_attributes = re.findall(
+        r'<style\s[^>]*>|<script\s(?![^>]*\b(?:src=|type="application/ld\+json"))[^>]*>', page, flags=re.IGNORECASE
+    )
     if with_attributes:
         raise BuildError(f"inline script and style tags must have no attributes, or the policy gets no hash for them: {with_attributes}")
     scripts = [csp_hash(code) for code in re.findall(r"<script>(.*?)</script>", page, flags=re.DOTALL | re.IGNORECASE)]

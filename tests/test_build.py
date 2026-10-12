@@ -121,6 +121,10 @@ class HeadersTest(unittest.TestCase):
         self.assertIn(build.csp_hash("three()"), build.headers_file("<SCRIPT>three()</SCRIPT>"))
         self.assertNotIn("unsafe-inline", csp)
 
+    def test_structured_data_is_allowed_and_not_hashed_because_it_never_runs(self):
+        csp = build.headers_file('<script type="application/ld+json">{"@type": "Person"}</script>')
+        self.assertNotIn(build.csp_hash('{"@type": "Person"}'), csp)
+
     def test_an_inline_script_or_style_with_attributes_is_an_error(self):
         for page in [
             '<script type="module">x()</script>',
