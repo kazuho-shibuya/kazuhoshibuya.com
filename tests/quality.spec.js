@@ -5,6 +5,7 @@ const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
 const { DESKTOP, open } = require("./helpers");
+const { SIZE, showPreview } = require("../scripts/render-og");
 
 test("the only scripts are the theme choice, the page script and Cloudflare's visitor count", async ({ page }) => {
   await open(page, DESKTOP);
@@ -79,6 +80,18 @@ test("shared links show a 1200x630 preview image with alt text", async ({ page, 
   const colours = new Set();
   for (let i = 0; i < png.data.length; i += 4 * 97) colours.add(png.data.readUInt32BE(i));
   expect(colours.size, "a blank image has one colour").toBeGreaterThan(10);
+});
+
+test("in the link preview, the name spans most of the image so it stays readable at LinkedIn's 480px copy", async ({ page }) => {
+  await open(page, SIZE);
+  await showPreview(page);
+  // The heading is a full-width block, so measure the text inside it.
+  const nameWidth = await page.locator(".hero h1").evaluate((h1) => {
+    const range = document.createRange();
+    range.selectNodeContents(h1);
+    return range.getBoundingClientRect().width;
+  });
+  expect(nameWidth / SIZE.width).toBeGreaterThan(0.7);
 });
 
 const PUBLIC = path.join(__dirname, "../public");

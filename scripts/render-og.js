@@ -6,9 +6,10 @@ const ROOT = path.join(__dirname, "..");
 const OUTPUT = path.join(ROOT, "public/og.png");
 const SIZE = { width: 1200, height: 630 };
 const FONTS = ["Source Serif 4", "Source Sans 3", "Source Code Pro", "Noto Serif JP"];
-// Links cannot be clicked in an image, and the small facts row is unreadable at preview size.
+// Hide what an image cannot use, and draw the header 1.45x so LinkedIn's 480px copy stays legible.
 const PREVIEW_STYLE = [
   ".theme, .links.contact, .facts, main, footer.site { display: none !important; }",
+  ".hero > *:not(.wave) { zoom: 1.45; }",
   ".hero { min-height: 630px; padding: 0 !important; display: flex; flex-direction: column; justify-content: center; }",
 ].join("\n");
 
