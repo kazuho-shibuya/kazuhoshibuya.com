@@ -88,42 +88,47 @@ test("the footer carries the mark, the name and the source link", async ({ page 
   await expect(footer.locator("a")).toHaveAttribute("href", "https://github.com/kazuho-shibuya/kazuhoshibuya.com");
 });
 
-// The wave may sit faintly behind text: at most 8% change in any colour channel (20 of 255), on every screen size.
-for (const [name, viewport, limit] of [
-  ["desktop", DESKTOP, 20],
-  ["tablet", TABLET, 20],
-  ["phone", PHONE, 20],
-  ["small phone", SMALL_PHONE, 20],
-]) {
-  test(`${name}: the wave pattern behind the top text stays within ${limit} of 255`, async ({ page }) => {
-    await open(page, viewport);
-    // The boxes of the letters themselves, not of the full-width blocks that hold them.
-    const boxes = await page.locator(".hero").evaluate((hero) => {
-      const walker = document.createTreeWalker(hero, NodeFilter.SHOW_TEXT);
-      const rects = [];
-      for (let node = walker.nextNode(); node; node = walker.nextNode()) {
-        if (!node.textContent.trim()) continue;
-        const range = document.createRange();
-        range.selectNodeContents(node);
-        for (const r of range.getClientRects()) {
-          rects.push({ x: Math.floor(r.x), y: Math.floor(r.y), width: Math.ceil(r.width), height: Math.ceil(r.height) });
+test.describe("the wave and the text", () => {
+  // The check hides the wave with an injected style, which the live Content Security Policy rightly blocks.
+  test.use({ bypassCSP: true });
+
+  // The wave may sit faintly behind text: at most 8% change in any colour channel (20 of 255), on every screen size.
+  for (const [name, viewport, limit] of [
+    ["desktop", DESKTOP, 20],
+    ["tablet", TABLET, 20],
+    ["phone", PHONE, 20],
+    ["small phone", SMALL_PHONE, 20],
+  ]) {
+    test(`${name}: the wave pattern behind the top text stays within ${limit} of 255`, async ({ page }) => {
+      await open(page, viewport);
+      // The boxes of the letters themselves, not of the full-width blocks that hold them.
+      const boxes = await page.locator(".hero").evaluate((hero) => {
+        const walker = document.createTreeWalker(hero, NodeFilter.SHOW_TEXT);
+        const rects = [];
+        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+          if (!node.textContent.trim()) continue;
+          const range = document.createRange();
+          range.selectNodeContents(node);
+          for (const r of range.getClientRects()) {
+            rects.push({ x: Math.floor(r.x), y: Math.floor(r.y), width: Math.ceil(r.width), height: Math.ceil(r.height) });
+          }
+        }
+        return rects.filter((r) => r.width > 0 && r.height > 0);
+      });
+      // One screenshot of the first screen with the wave, one without; compare only pixels under text.
+      const withWave = PNG.sync.read(await page.screenshot({ scale: "css" }));
+      await page.addStyleTag({ content: ".wave, .hero::before { display: none !important; }" });
+      const withoutWave = PNG.sync.read(await page.screenshot({ scale: "css" }));
+      let worst = 0;
+      for (const box of boxes) {
+        for (let y = Math.max(0, box.y); y < Math.min(withWave.height, box.y + box.height); y++) {
+          for (let x = Math.max(0, box.x); x < Math.min(withWave.width, box.x + box.width); x++) {
+            const i = (y * withWave.width + x) * 4;
+            for (let c = 0; c < 3; c++) worst = Math.max(worst, Math.abs(withWave.data[i + c] - withoutWave.data[i + c]));
+          }
         }
       }
-      return rects.filter((r) => r.width > 0 && r.height > 0);
+      expect(worst).toBeLessThanOrEqual(limit);
     });
-    // One screenshot of the first screen with the wave, one without; compare only pixels under text.
-    const withWave = PNG.sync.read(await page.screenshot({ scale: "css" }));
-    await page.addStyleTag({ content: ".wave, .hero::before { display: none !important; }" });
-    const withoutWave = PNG.sync.read(await page.screenshot({ scale: "css" }));
-    let worst = 0;
-    for (const box of boxes) {
-      for (let y = Math.max(0, box.y); y < Math.min(withWave.height, box.y + box.height); y++) {
-        for (let x = Math.max(0, box.x); x < Math.min(withWave.width, box.x + box.width); x++) {
-          const i = (y * withWave.width + x) * 4;
-          for (let c = 0; c < 3; c++) worst = Math.max(worst, Math.abs(withWave.data[i + c] - withoutWave.data[i + c]));
-        }
-      }
-    }
-    expect(worst).toBeLessThanOrEqual(limit);
-  });
-}
+  }
+});
