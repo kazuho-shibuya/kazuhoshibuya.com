@@ -74,6 +74,23 @@ test("the tab icon and the header mark are the sail", async ({ page }) => {
   await expect(page.locator(".hero .label .mark")).toBeVisible();
 });
 
+for (const [name, viewport] of [["desktop", DESKTOP], ["phone", PHONE]]) {
+  test(`${name}: the build flow shows four arrows and no step breaks mid-way`, async ({ page }) => {
+    await open(page, viewport);
+    const arrows = page.locator(".pipeline b");
+    await expect(arrows).toHaveCount(4);
+    for (const arrow of await arrows.all()) await expect(arrow).toHaveText("→");
+    const steps = await page.locator(".pipeline span").evaluateAll((all) =>
+      all.map((s) => {
+        const range = document.createRange();
+        range.selectNodeContents(s.firstChild);
+        return range.getClientRects().length;
+      }),
+    );
+    expect(steps.every((lines) => lines === 1), `lines per step: ${steps}`).toBe(true);
+  });
+}
+
 test("every font file loads", async ({ page }) => {
   await open(page, DESKTOP);
   const loaded = await page.evaluate(() => [...document.fonts].filter((f) => f.status === "loaded").map((f) => f.family.replaceAll('"', "")));

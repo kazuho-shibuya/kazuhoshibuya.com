@@ -184,6 +184,9 @@
   /* ---------- How this page is built ---------- */
   .colophon .intro { margin: 0; max-width: 62ch; color: var(--soft); }
   .colophon .links { margin-top: 16px; }
+  .pipeline { display: flex; flex-wrap: wrap; row-gap: 4px; margin: 16px 0 0; max-width: 62ch; font: 400 var(--fs-small)/1.6 var(--mono); color: var(--ink); }
+  .pipeline span { white-space: nowrap; }
+  .pipeline b { font-weight: 400; color: var(--accent); margin: 0 0.6em; }
   .colophon .intro.note { margin: 20px 0 0; }
   .colophon .motifs + .intro.note { margin-top: 28px; }
   .motifs { margin: 40px 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; max-width: 62ch; }
@@ -413,6 +416,7 @@
   <h2 class="label" id="built">How it's built</h2>
   <div>
     <p class="intro">Built with Claude Code from plans I wrote and reviewed. The text is generated from my LinkedIn profile, and a change goes live only after browser and accessibility tests pass.</p>
+    <p class="pipeline"><span>LinkedIn text<b aria-hidden="true">→</b></span><span>Python build<b aria-hidden="true">→</b></span><span>Playwright and accessibility tests<b aria-hidden="true">→</b></span><span>GitHub Actions<b aria-hidden="true">→</b></span><span>Cloudflare Workers</span></p>
     <ul class="links"><li><a href="https://github.com/kazuho-shibuya/kazuhoshibuya.com">Source on GitHub</a></li></ul>
     <ul class="motifs">
       <li><svg class="m-sail" aria-hidden="true"><use href="#sail"/></svg><div><b>帆, the sail</b>From my name, 一帆, which means one sail.</div></li>
