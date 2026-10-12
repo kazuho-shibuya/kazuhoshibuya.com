@@ -24,7 +24,8 @@ src/template.html          the page's markup and the text that belongs to the si
 src/styles.css, *.js       styles and the two small scripts, written separately and inlined by the build
 scripts/build.py           fills the template from the LinkedIn text; writes public/index.html and public/_headers
 scripts/subset-jp-font.sh  rebuilds the Japanese font with only the characters the page uses
-public/                    the built page, its headers file and self-hosted fonts (generated, committed), robots.txt and sitemap.xml
+public/                    the built page, its headers file and self-hosted fonts (generated, committed)
+public/robots.txt, sitemap.xml  written by hand: where search engines start
 tests/                     unit tests for the build, browser tests by concern, approved screenshots
 deploy.sh                  every check, deploy, then the browser checks against the live site
 ```

@@ -7,7 +7,7 @@ chars=$(python3 - <<'EOF'
 import re
 
 template = open("src/template.html").read()
-japanese = "".join(re.findall(r'lang="ja">(.*?)</span>', template))
+japanese = "".join(re.findall(r'lang="ja">(.*?)</span>', template, flags=re.DOTALL))
 text = re.sub(r"<[^>]+>|\s", "", japanese)
 print("".join(sorted(set(text))))
 EOF

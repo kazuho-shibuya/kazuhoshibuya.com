@@ -48,12 +48,15 @@ test("search engines get one address, a sitemap, link previews and the profile l
   expect(person.name).toBe("Kazuho Shibuya");
   expect(person.alternateName).toEqual(["澁谷 一帆", "渋谷 一帆", "しぶや かずほ", "シブヤ カズホ"]);
   expect(person.url).toBe(home);
+  expect(Object.keys(person)).not.toContain("jobTitle");
   const contactLinks = await page.locator('.links.contact a[href^="https://"]').evaluateAll((links) => links.map((a) => a.href));
   expect(person.sameAs).toEqual(contactLinks);
 
   const robots = await request.get("/robots.txt");
   expect(robots.ok()).toBe(true);
-  expect(await robots.text()).toContain(`Sitemap: ${home}sitemap.xml`);
+  const rules = await robots.text();
+  expect(rules).toContain("User-agent: *\nAllow: /");
+  expect(rules).toContain(`Sitemap: ${home}sitemap.xml`);
   const sitemap = await request.get("/sitemap.xml");
   expect(await sitemap.text()).toContain(`<loc>${home}</loc>`);
 });

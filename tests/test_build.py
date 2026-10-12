@@ -87,6 +87,11 @@ class RenderTest(unittest.TestCase):
     def setUp(self):
         self.data = build.parse(FIXTURE, london_companies={"Acme"})
 
+    def test_a_quote_cannot_end_an_attribute_value(self):
+        data = build.parse(FIXTURE.replace("| Leeds", '| Leeds "UK"'), london_companies={"Acme"})
+        page = build.render('<meta content="{{headline}}">', data)
+        self.assertIn("Leeds &quot;UK&quot;", page)
+
     def test_text_is_escaped(self):
         page = build.render("{{about}}", self.data)
         self.assertIn("&lt;work&gt; &amp; more", page)
@@ -122,8 +127,13 @@ class HeadersTest(unittest.TestCase):
         self.assertNotIn("unsafe-inline", csp)
 
     def test_structured_data_is_allowed_and_not_hashed_because_it_never_runs(self):
-        csp = build.headers_file('<script type="application/ld+json">{"@type": "Person"}</script>')
+        csp = build.headers_file('<script>x()</script><script type="application/ld+json">{"@type": "Person"}</script>')
+        self.assertIn(build.csp_hash("x()"), csp)
         self.assertNotIn(build.csp_hash('{"@type": "Person"}'), csp)
+
+    def test_structured_data_with_any_other_attribute_is_an_error(self):
+        with self.assertRaisesRegex(build.BuildError, "attributes"):
+            build.headers_file('<script type="application/ld+json" onload="x()">{}</script>')
 
     def test_an_inline_script_or_style_with_attributes_is_an_error(self):
         for page in [
