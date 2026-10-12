@@ -8,6 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2032%2032%27%3E%3Cstyle%3E.s-main%7Bfill%3A%231f3a64%7D.s-jib%7Bfill%3A%23c2432b%7D.s-sea%7Bstroke%3A%231f3a64%7D%40media%20%28prefers-color-scheme%3A%20dark%29%7B.s-main%7Bfill%3A%23f2eee3%7D.s-jib%7Bfill%3A%23f08262%7D.s-sea%7Bstroke%3A%23f2eee3%7D%7D%3C%2Fstyle%3E%3Cpath%20d%3D%27M15.5%201%20L15.5%2019%20L4%2019%20Q11%2011%2015.5%201Z%27%20class%3D%27s-main%27%2F%3E%3Cpath%20d%3D%27M18%203%20Q26.5%2010.5%2028%2019%20L18%2019Z%27%20class%3D%27s-jib%27%2F%3E%3Cg%20class%3D%27s-sea%27%20fill%3D%27none%27%20stroke-width%3D%272.4%27%3E%3Cpath%20d%3D%27M1.2%2031%20A7.8%207.8%200%200%201%2016.8%2031%27%2F%3E%3Cpath%20d%3D%27M5.4%2031%20A3.6%203.6%200%200%201%2012.6%2031%27%2F%3E%3Cpath%20d%3D%27M15.2%2031%20A7.8%207.8%200%200%201%2030.8%2031%27%2F%3E%3Cpath%20d%3D%27M19.4%2031%20A3.6%203.6%200%200%201%2026.6%2031%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E">
 <link rel="preload" href="fonts/source-serif-4-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/source-sans-3-normal.woff2" as="font" type="font/woff2" crossorigin>
+<script>try { const t = localStorage.getItem("theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}</script>
 <style>
   @font-face { font-family: "Source Serif 4"; src: url("fonts/source-serif-4-normal.woff2") format("woff2"); font-weight: 200 900; font-style: normal; font-display: swap; }
   @font-face { font-family: "Source Serif 4"; src: url("fonts/source-serif-4-italic.woff2") format("woff2"); font-weight: 200 900; font-style: italic; font-display: swap; }
@@ -16,18 +17,19 @@
   @font-face { font-family: "Noto Serif JP"; src: url("fonts/noto-serif-jp.woff2") format("woff2"); font-weight: 500; font-display: swap; }
 
   :root {
-    --paper: #f8f5ee;
-    --ink: #1c2740;
-    --name: #1f3a64;
-    --soft: #4f5868;
-    --faint: #676f7d;
-    --rule: #dad5c9;
-    --accent: #c2432b;
-    --sakura: #f2b8c6;
-    --sakura-deep: #e6889f;
-    --sakura-text: #9c5c6c;
-    --rose: #b8202e;
-    --wave: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2240%22%20height%3D%2220%22%20viewBox%3D%220%200%2040%2020%22%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%22-10%22%20r%3D%2220%22%20fill%3D%22%23f8f5ee%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%22-10%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%22-10%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%22-10%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%2220%22%20fill%3D%22%23f8f5ee%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%220%22%20r%3D%2220%22%20fill%3D%22%23f8f5ee%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%220%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%220%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%220%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2210%22%20r%3D%2220%22%20fill%3D%22%23f8f5ee%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2210%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2210%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2210%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%2220%22%20fill%3D%22%23f8f5ee%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2220%22%20r%3D%2220%22%20fill%3D%22%23f8f5ee%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2220%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2220%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2220%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2230%22%20r%3D%2220%22%20fill%3D%22%23f8f5ee%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2230%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2230%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2230%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3C%2Fsvg%3E");
+    color-scheme: light dark;
+    --paper: light-dark(#f8f5ee, #131a2a);
+    --ink: light-dark(#1c2740, #e9e5da);
+    --name: light-dark(#1f3a64, #f2eee3);
+    --soft: light-dark(#4f5868, #b4bbc9);
+    --faint: light-dark(#676f7d, #8d95a6);
+    --rule: light-dark(#dad5c9, #273352);
+    --accent: light-dark(#c2432b, #f08262);
+    --sakura: light-dark(#f2b8c6, #d98da1);
+    --sakura-deep: light-dark(#e6889f, #e9a4b6);
+    --sakura-text: light-dark(#9c5c6c, #e9a4b6);
+    --rose: light-dark(#b8202e, #da5864);
+    --wave-light: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2240%22%20height%3D%2220%22%20viewBox%3D%220%200%2040%2020%22%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%22-10%22%20r%3D%2220%22%20fill%3D%22%23f8f5ee%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%22-10%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%22-10%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%22-10%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%2220%22%20fill%3D%22%23f8f5ee%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%220%22%20r%3D%2220%22%20fill%3D%22%23f8f5ee%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%220%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%220%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%220%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2210%22%20r%3D%2220%22%20fill%3D%22%23f8f5ee%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2210%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2210%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2210%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%2220%22%20fill%3D%22%23f8f5ee%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2220%22%20r%3D%2220%22%20fill%3D%22%23f8f5ee%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2220%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2220%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2220%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2230%22%20r%3D%2220%22%20fill%3D%22%23f8f5ee%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2230%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2230%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2230%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3C%2Fsvg%3E");
 
     --serif: "Source Serif 4", Georgia, serif;
     --sans: "Source Sans 3", system-ui, -apple-system, sans-serif;
@@ -41,23 +43,14 @@
     --fs-title: 1.5rem;
     --fs-focus: clamp(1.5rem, 1.1rem + 1.5vw, 2rem);
     --fs-name: clamp(2.9rem, 1.6rem + 5.8vw, 6rem);
+    --wave-dark: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2240%22%20height%3D%2220%22%20viewBox%3D%220%200%2040%2020%22%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%22-10%22%20r%3D%2220%22%20fill%3D%22%23131a2a%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%22-10%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%22-10%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%22-10%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%2220%22%20fill%3D%22%23131a2a%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%220%22%20r%3D%2220%22%20fill%3D%22%23131a2a%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%220%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%220%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%220%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2210%22%20r%3D%2220%22%20fill%3D%22%23131a2a%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2210%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2210%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2210%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%2220%22%20fill%3D%22%23131a2a%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2220%22%20r%3D%2220%22%20fill%3D%22%23131a2a%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2220%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2220%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2220%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2230%22%20r%3D%2220%22%20fill%3D%22%23131a2a%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2230%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2230%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2230%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3C%2Fsvg%3E");
+    --wave: var(--wave-light);
   }
+
+  :root[data-theme="light"] { color-scheme: light; }
+  :root[data-theme="dark"] { color-scheme: dark; --wave: var(--wave-dark); --wave-opacity: .16; }
   @media (prefers-color-scheme: dark) {
-    :root {
-      --paper: #131a2a;
-      --ink: #e9e5da;
-      --name: #f2eee3;
-      --soft: #b4bbc9;
-      --faint: #8d95a6;
-      --rule: #273352;
-      --accent: #f08262;
-      --sakura: #d98da1;
-      --sakura-deep: #e9a4b6;
-      --sakura-text: #e9a4b6;
-      --rose: #da5864;
-      --wave: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2240%22%20height%3D%2220%22%20viewBox%3D%220%200%2040%2020%22%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%22-10%22%20r%3D%2220%22%20fill%3D%22%23131a2a%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%22-10%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%22-10%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%22-10%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%2220%22%20fill%3D%22%23131a2a%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%220%22%20r%3D%2220%22%20fill%3D%22%23131a2a%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%220%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%220%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%220%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2210%22%20r%3D%2220%22%20fill%3D%22%23131a2a%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2210%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2210%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2210%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%2220%22%20fill%3D%22%23131a2a%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2220%22%20r%3D%2220%22%20fill%3D%22%23131a2a%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2220%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2220%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2220%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2230%22%20r%3D%2220%22%20fill%3D%22%23131a2a%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2230%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2230%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2230%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3C%2Fsvg%3E");
-      --wave-opacity: .16;
-    }
+    :root:not([data-theme="light"]) { --wave: var(--wave-dark); --wave-opacity: .16; }
   }
 
   * { box-sizing: border-box; }
@@ -94,6 +87,18 @@
   .hero .label { color: var(--accent); display: flex; align-items: center; }
   .hero .label .mark { width: 26px; height: 26px; flex: none; margin-right: 12px; }
   .sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+  .theme { position: absolute; top: 40px; right: 0; z-index: 3; width: 40px; height: 40px; display: grid; place-items: center;
+    border: 1px solid var(--rule); border-radius: 50%; background: var(--paper); color: var(--soft); cursor: pointer; transition: color .2s, border-color .2s; }
+  .theme:hover { color: var(--accent); border-color: var(--accent); }
+  .theme:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .theme svg { width: 18px; height: 18px; fill: currentColor; stroke: currentColor; }
+  .theme .sun { display: none; }
+  :root[data-theme="dark"] .theme .sun { display: block; }
+  :root[data-theme="dark"] .theme .moon { display: none; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .theme .sun { display: block; }
+    :root:not([data-theme="light"]) .theme .moon { display: none; }
+  }
   .s-main { fill: var(--name); }
   .s-jib { fill: var(--accent); }
   .s-sea { stroke: var(--name); }
@@ -199,7 +204,7 @@
   /* ---------- Motion ---------- */
   @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
   @keyframes unfold { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
-  .hero > *:not(.wave) { animation: rise .8s cubic-bezier(.2,.7,.2,1) both; }
+  .hero > *:not(.wave):not(.theme) { animation: rise .8s cubic-bezier(.2,.7,.2,1) both; }
   .hero > *:nth-child(2) { animation-delay: .08s; }
   .hero > *:nth-child(3) { animation-delay: .16s; }
   .hero > *:nth-child(4) { animation-delay: .26s; }
@@ -239,6 +244,7 @@
   @media (max-width: 760px) {
     .wrap { padding: 0 20px; }
     .hero { padding: 64px 0 56px; }
+    .theme { top: 16px; width: 36px; height: 36px; }
     .hero .label { letter-spacing: 0; }
     .hero .label .mark { width: 20px; height: 20px; margin-right: 8px; }
     .wave { inset: -40px -20px 0; -webkit-mask-image: radial-gradient(65% 30% at 100% 88%, #000 10%, transparent 75%), linear-gradient(to bottom, #000 70%, transparent 100%); -webkit-mask-composite: source-in; mask-image: radial-gradient(65% 30% at 100% 88%, #000 10%, transparent 75%), linear-gradient(to bottom, #000 70%, transparent 100%); mask-composite: intersect; }
@@ -261,6 +267,7 @@
   <svg class="sprite" aria-hidden="true"><symbol id="sail" viewBox="0 0 32 32"><path d="M15.5 1 L15.5 19 L4 19 Q11 11 15.5 1Z" class="s-main"/><path d="M18 3 Q26.5 10.5 28 19 L18 19Z" class="s-jib"/><g class="s-sea" fill="none" stroke-width="2.4"><path d="M1.2 31 A7.8 7.8 0 0 1 16.8 31"/><path d="M5.4 31 A3.6 3.6 0 0 1 12.6 31"/><path d="M15.2 31 A7.8 7.8 0 0 1 30.8 31"/><path d="M19.4 31 A3.6 3.6 0 0 1 26.6 31"/></g></symbol></svg>
   <header class="hero">
     <div class="wave" aria-hidden="true"></div>
+    <button class="theme" type="button" aria-label="Switch colour theme" hidden><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"/></svg><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><g stroke-width="2" stroke-linecap="round"><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></g></svg></button>
     <p class="label"><svg class="mark" aria-hidden="true"><use href="#sail"/></svg>{{role}}<span class="city">&nbsp;· {{city}}</span></p>
     <h1>Kazuho Shibuya</h1>
     <p class="origin"><span lang="ja">渋谷 一帆</span><span class="route">Tokyo<b aria-hidden="true">→</b><span class="visually-hidden">to</span>London</span></p>
@@ -322,7 +329,7 @@
 <section class="block colophon" aria-labelledby="built">
   <h2 class="label" id="built">How this page is built</h2>
   <div>
-    <p class="intro">Built with Claude Code from plans I wrote and reviewed. One static HTML file on Cloudflare: no framework and no cookies. The only scripts are the Email link, which copies the address, and Cloudflare's cookie-free visitor count. The words are built from my LinkedIn profile text at every deploy, and the page ships only after its browser tests pass.</p>
+    <p class="intro">Built with Claude Code from plans I wrote and reviewed. One static HTML file on Cloudflare: no framework and no cookies. The scripts are small: the Email link copies the address, the button switches between light and dark, and Cloudflare adds a cookie-free visitor count. The words are built from my LinkedIn profile text at every deploy, and the page ships only after its browser tests pass.</p>
     <ul class="motifs">
       <li><div class="m-wave" aria-hidden="true"></div><div><b>青海波, the wave pattern</b>Drawn by the page itself: concentric arcs, one pixel wide, tiled. A pattern Japan has used on textiles and ceramics for centuries.</div></li>
       <li><svg viewBox="0 0 80 40" class="m-route"><path d="M8 32 H30 L46 16 H72" class="m-tyo"/><path d="M46 16 H72" class="m-ldn"/><circle cx="12" cy="32" r="4"/><circle cx="26" cy="32" r="4"/><circle cx="52" cy="16" r="4"/><circle cx="68" cy="16" r="4" class="m-now"/></svg><div><b>The route, Tokyo to London</b>The experience list borrows the London line-map grammar: one line, a circle per station, a 45° turn where the city changes.</div></li>
@@ -345,6 +352,17 @@
       link.nextElementSibling.textContent = `Copied ${link.dataset.copy}`;
     });
   }
+  const root = document.documentElement;
+  const toggle = document.querySelector("button.theme");
+  const isDark = () => (root.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")) === "dark";
+  const label = () => toggle.setAttribute("aria-label", isDark() ? "Switch to light mode" : "Switch to dark mode");
+  toggle.hidden = false;
+  label();
+  toggle.addEventListener("click", () => {
+    root.dataset.theme = isDark() ? "light" : "dark";
+    try { localStorage.setItem("theme", root.dataset.theme); } catch (e) {}
+    label();
+  });
 </script>
 </body>
 </html>
