@@ -1,13 +1,42 @@
 const { test, expect } = require("@playwright/test");
 const { PNG } = require("pngjs");
-const { DESKTOP, TABLET, PHONE, SMALL_PHONE, open } = require("./helpers");
+const { DESKTOP, TABLET, PHONE, SMALL_PHONE, WIDTHS, open } = require("./helpers");
 
-for (const [name, viewport] of [
-  ["desktop", DESKTOP],
-  ["tablet", TABLET],
-  ["phone", PHONE],
-]) {
-  test(`${name}: the page cannot scroll sideways`, async ({ page }) => {
+// Runs in the page: the text of each element that takes more than one row.
+function wrappedText(elements) {
+  // Text only: an icon taller than the line would hide a second line that starts beside it.
+  const rowsOf = (el) => {
+    const pieces = [];
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      const range = document.createRange();
+      range.selectNodeContents(node);
+      pieces.push(...[...range.getClientRects()].filter((r) => r.width > 1 && r.height > 1));
+    }
+    pieces.sort((a, b) => a.top - b.top);
+    let rows = 0;
+    let bottom = -Infinity;
+    for (const piece of pieces) {
+      // Pieces of one row overlap vertically even when their font sizes differ.
+      if (piece.top >= bottom - 1) rows += 1;
+      bottom = Math.max(bottom, piece.bottom);
+    }
+    return rows;
+  };
+  const visible = elements.filter((el) => el.getClientRects().length);
+  const wrapped = visible.filter((el) => rowsOf(el) > 1);
+  return wrapped.map((el) => el.textContent.trim().replace(/\s+/g, " ").slice(0, 50));
+}
+
+for (const [name, viewport] of WIDTHS) {
+  test(`${name} (${viewport.width}px): nothing marked data-one-line wraps`, async ({ page }) => {
+    await open(page, viewport);
+    expect(await page.locator("[data-one-line]").evaluateAll(wrappedText)).toEqual([]);
+  });
+}
+
+for (const [name, viewport] of WIDTHS) {
+  test(`${name} (${viewport.width}px): the page cannot scroll sideways`, async ({ page }) => {
     await open(page, viewport);
     const scrollX = await page.evaluate(() => {
       window.scrollTo(5000, 0);
@@ -47,37 +76,40 @@ test("phone: the focus line is three short lines with no dots", async ({ page })
   await expect(page.locator(".focus em").first()).toBeHidden();
 });
 
-for (const [name, viewport] of [
-  ["phone", PHONE],
-  ["small phone", SMALL_PHONE],
-]) {
-  test(`${name}: the top label with the sail stays on one line`, async ({ page }) => {
-    await open(page, viewport);
-    const lines = await page
-      .locator(".hero .label")
-      .evaluate((el) => Math.round(el.getBoundingClientRect().height / parseFloat(getComputedStyle(el).lineHeight)));
-    expect(lines).toBe(1);
-  });
-}
-
 test("the tab icon and the header mark are the sail", async ({ page }) => {
   await open(page, DESKTOP);
   await expect(page.locator('link[rel="icon"]')).toHaveAttribute("href", /^data:image\/svg\+xml,.*s-jib/);
   await expect(page.locator(".hero .label .mark")).toBeVisible();
 });
 
+test("the one-line check sees a label that wraps beside the taller sail mark", async ({ page }) => {
+  await open(page, PHONE);
+  const label = page.locator(".hero .label");
+  await label.evaluate((el) => (el.style.width = "260px"));
+  expect(await label.evaluateAll(wrappedText)).toHaveLength(1);
+});
+
+for (const [name, viewport] of WIDTHS) {
+  test(`${name} (${viewport.width}px): after tapping Email, the contact row is still one line`, async ({ page, context, browserName }) => {
+    test.skip(browserName !== "chromium", "clipboard permissions can only be granted in Chromium");
+    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+    await open(page, viewport);
+    await page.locator(".links.contact a.email").click();
+    await expect(page.locator(".links.contact .copied")).toHaveText(/^Copied /);
+    const linkRows = await page
+      .locator(".links.contact a")
+      .evaluateAll((links) => new Set(links.map((a) => Math.round(a.getBoundingClientRect().top))).size);
+    expect(linkRows, "rows the three links take").toBe(1);
+    const right = await page.locator(".links.contact .copied").evaluate((el) => el.getBoundingClientRect().right);
+    expect(right).toBeLessThanOrEqual(viewport.width);
+  });
+}
+
 test("desktop: every row in How it's built sits on one line", async ({ page }) => {
   await open(page, DESKTOP);
-  const rows = await page.locator(".decisions dd, .motifs p").evaluateAll((all) =>
-    all.map((el) => {
-      const range = document.createRange();
-      range.selectNodeContents(el);
-      const tops = new Set([...range.getClientRects()].map((r) => Math.round(r.top)));
-      return { text: el.textContent.trim().slice(0, 40), lines: tops.size };
-    }),
-  );
-  expect(rows.length).toBe(8);
-  expect(rows.filter((r) => r.lines !== 1)).toEqual([]);
+  const rows = page.locator(".decisions dd, .motifs p");
+  await expect(rows).toHaveCount(9);
+  expect(await rows.evaluateAll(wrappedText)).toEqual([]);
 });
 
 test("the footer carries the mark, the name and the source link", async ({ page }) => {
@@ -87,6 +119,19 @@ test("the footer carries the mark, the name and the source link", async ({ page 
   await expect(footer).toContainText("Kazuho Shibuya · London");
   await expect(footer.locator("a")).toHaveAttribute("href", "https://github.com/kazuho-shibuya/kazuhoshibuya.com");
 });
+
+// The largest change in any colour channel between two screenshots, inside one box.
+function largestColourChange(a, b, box) {
+  let largest = 0;
+  for (let y = Math.max(0, box.y); y < Math.min(a.height, box.y + box.height); y++) {
+    for (let x = Math.max(0, box.x); x < Math.min(a.width, box.x + box.width); x++) {
+      const i = (y * a.width + x) * 4;
+      const change = Math.max(...[0, 1, 2].map((c) => Math.abs(a.data[i + c] - b.data[i + c])));
+      largest = Math.max(largest, change);
+    }
+  }
+  return largest;
+}
 
 test.describe("the wave and the text", () => {
   // The check hides the wave with an injected style, which the live Content Security Policy rightly blocks.
@@ -119,16 +164,41 @@ test.describe("the wave and the text", () => {
       const withWave = PNG.sync.read(await page.screenshot({ scale: "css" }));
       await page.addStyleTag({ content: ".wave, .hero::before { display: none !important; }" });
       const withoutWave = PNG.sync.read(await page.screenshot({ scale: "css" }));
-      let worst = 0;
-      for (const box of boxes) {
-        for (let y = Math.max(0, box.y); y < Math.min(withWave.height, box.y + box.height); y++) {
-          for (let x = Math.max(0, box.x); x < Math.min(withWave.width, box.x + box.width); x++) {
-            const i = (y * withWave.width + x) * 4;
-            for (let c = 0; c < 3; c++) worst = Math.max(worst, Math.abs(withWave.data[i + c] - withoutWave.data[i + c]));
-          }
-        }
-      }
+      const worst = Math.max(0, ...boxes.map((box) => largestColourChange(withWave, withoutWave, box)));
       expect(worst).toBeLessThanOrEqual(limit);
     });
   }
 });
+
+const SCALE = [14, 18, 24, 32];
+// Only these scale with the screen; everything else sits on a step of SCALE.
+const FLUID = { ".focus": [24, 32], h1: [46.4, 96] };
+
+// Runs in the page: each rendered text size off the scale, including text drawn by ::before.
+function offScaleSizes({ scale, fluid }) {
+  const px = (style) => Math.round(parseFloat(style.fontSize) * 10) / 10;
+  const allowed = (el, size) => {
+    const range = Object.entries(fluid).find(([selector]) => el.closest(selector));
+    if (range) return size >= range[1][0] && size <= range[1][1];
+    return scale.includes(size);
+  };
+  const hasText = (el) => [...el.childNodes].some((n) => n.nodeType === Node.TEXT_NODE && n.textContent.trim());
+  const hasDrawnText = (el) => /^"[^"]+"$|counter/.test(getComputedStyle(el, "::before").content);
+  const rendered = [...document.querySelectorAll("body *")].filter((el) => el.getClientRects().length && !el.closest(".visually-hidden"));
+  const off = [];
+  for (const el of rendered) {
+    const name = `${el.tagName.toLowerCase()}.${el.className}`;
+    const size = px(getComputedStyle(el));
+    if (hasText(el) && !allowed(el, size)) off.push(`${size}px: ${name} "${el.textContent.trim().slice(0, 30)}"`);
+    const drawn = px(getComputedStyle(el, "::before"));
+    if (hasDrawnText(el) && !scale.includes(drawn)) off.push(`${drawn}px: ${name}::before`);
+  }
+  return [...new Set(off)];
+}
+
+for (const [name, viewport] of WIDTHS) {
+  test(`${name} (${viewport.width}px): every text size is on the type scale`, async ({ page }) => {
+    await open(page, viewport);
+    expect(await page.evaluate(offScaleSizes, { scale: SCALE, fluid: FLUID })).toEqual([]);
+  });
+}

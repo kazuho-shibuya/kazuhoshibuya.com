@@ -4,6 +4,7 @@ set -e
 cd "$(dirname "$0")/.."
 python3 scripts/build.py >/dev/null
 live=$(mktemp)
+trap 'rm -f "$live"' EXIT
 curl -sf https://kazuhoshibuya.com -o "$live"
 if ! git diff --quiet -- public/index.html; then
   echo "stale: linkedin.md or the template has changed since the page was last built. Run ./deploy.sh."

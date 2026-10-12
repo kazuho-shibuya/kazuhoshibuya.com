@@ -1,5 +1,6 @@
 """Unit tests for scripts/build.py, run with: python3 -m unittest discover tests"""
 
+import re
 import sys
 import unittest
 from pathlib import Path
@@ -10,6 +11,13 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import build
 
 FIXTURE = (ROOT / "tests/fixtures/linkedin.md").read_text()
+
+
+def matches_template(page, template):
+    """True when the page is the template with only its placeholders filled in."""
+    fixed_parts = re.split(r"\{\{.*?\}\}", template)
+    pattern = ".*?".join(re.escape(part) for part in fixed_parts)
+    return re.fullmatch(pattern, page, flags=re.DOTALL) is not None
 
 
 class ParseTest(unittest.TestCase):
@@ -42,6 +50,36 @@ class ParseTest(unittest.TestCase):
     def test_a_missing_section_names_the_section(self):
         broken = FIXTURE.replace("## 2. About", "## 2. Bio")
         with self.assertRaisesRegex(build.BuildError, "2. About"):
+            build.parse(broken, london_companies={"Acme"})
+
+    def test_a_headline_without_five_parts_is_an_error(self):
+        broken = FIXTURE.replace("Engineer at Acme | ", "")
+        with self.assertRaisesRegex(build.BuildError, "5 parts"):
+            build.parse(broken, london_companies={"Acme"})
+
+    def test_a_stack_line_without_a_label_is_an_error(self):
+        broken = FIXTURE.replace("Languages: Go, Rust", "Go, Rust")
+        with self.assertRaisesRegex(build.BuildError, "Label: value"):
+            build.parse(broken, london_companies={"Acme"})
+
+    def test_a_role_heading_in_another_shape_is_an_error(self):
+        broken = FIXTURE.replace("### Engineer, Acme (Jan 2023 – Jan 2025)", "### Engineer at Acme, 2023 to 2025")
+        with self.assertRaisesRegex(build.BuildError, "matched 2 of 3"):
+            build.parse(broken, london_companies={"Acme"})
+
+    def test_a_role_without_bullets_is_an_error(self):
+        broken = FIXTURE.replace("\n\n• Wrote the deployment scripts.", "")
+        with self.assertRaisesRegex(build.BuildError, "'Developer, Widgets, Inc.' has no"):
+            build.parse(broken, london_companies={"Acme"})
+
+    def test_a_role_without_a_fenced_block_names_the_role(self):
+        broken = FIXTURE.replace("```\nBuilt internal tools.\n\n• Wrote the deployment scripts.\n```", "Built internal tools.")
+        with self.assertRaisesRegex(build.BuildError, "'Developer, Widgets, Inc.' has no fenced block"):
+            build.parse(broken, london_companies={"Acme"})
+
+    def test_an_empty_fenced_block_is_an_error(self):
+        broken = FIXTURE.replace("```\nBuilt internal tools.\n\n• Wrote the deployment scripts.\n```", "```\n\n```")
+        with self.assertRaisesRegex(build.BuildError, "empty fenced block"):
             build.parse(broken, london_companies={"Acme"})
 
 
@@ -80,7 +118,51 @@ class HeadersTest(unittest.TestCase):
         for code in ["a{}", "one()", "two()"]:
             self.assertIn(build.csp_hash(code), csp)
         self.assertEqual(csp.count("'sha256-"), 3)
+        self.assertIn(build.csp_hash("three()"), build.headers_file("<SCRIPT>three()</SCRIPT>"))
         self.assertNotIn("unsafe-inline", csp)
+
+    def test_an_inline_script_or_style_with_attributes_is_an_error(self):
+        for page in [
+            '<script type="module">x()</script>',
+            '<style media="print">a{}</style>',
+            '<style src="x">a{}</style>',
+            '<SCRIPT type="module">x()</SCRIPT>',
+        ]:
+            with self.subTest(page=page), self.assertRaisesRegex(build.BuildError, "attributes"):
+                build.headers_file(page)
+
+
+class IncludeTest(unittest.TestCase):
+    def test_an_include_is_replaced_by_the_file(self):
+        page = build.include_files("<style>\n{{include: styles.css}}\n</style>")
+        self.assertIn((ROOT / "src/styles.css").read_text().rstrip("\n"), page)
+        self.assertNotIn("{{include", page)
+
+    def test_a_placeholder_inside_an_included_file_is_an_error(self):
+        folder = Path(self.id().replace(".", "_"))
+        folder.mkdir(exist_ok=True)
+        self.addCleanup(lambda: (folder / "x.js").unlink() or folder.rmdir())
+        (folder / "x.js").write_text("// {{role}}\n")
+        with self.assertRaisesRegex(build.BuildError, "placeholder"):
+            build.include_files("{{include: x.js}}", folder)
+
+    def test_an_include_of_a_missing_file_is_an_error(self):
+        with self.assertRaisesRegex(build.BuildError, "missing.css"):
+            build.include_files("{{include: missing.css}}")
+
+
+class CommittedPageTest(unittest.TestCase):
+    def test_the_committed_page_matches_the_current_source_everywhere_but_the_placeholders(self):
+        """CI cannot rebuild without the private source, so this catches a source edit that was never built."""
+        template = build.include_files((ROOT / "src/template.html").read_text())
+        page = (ROOT / "public/index.html").read_text()
+        self.assertTrue(matches_template(page, template), "public/index.html is stale; run npm run build")
+
+    def test_a_deleted_line_or_a_changed_placeholder_line_is_caught(self):
+        template = "<p>{{role}}</p>\n<i>fixed</i>\n"
+        self.assertTrue(matches_template("<p>Engineer</p>\n<i>fixed</i>\n", template))
+        self.assertFalse(matches_template("<p>Engineer</p>\n", template))
+        self.assertFalse(matches_template('<p class="x">Engineer</p>\n<i>fixed</i>\n', template))
 
 
 if __name__ == "__main__":

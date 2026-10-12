@@ -8,294 +8,36 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2032%2032%27%3E%3Cstyle%3E.s-main%7Bfill%3A%231f3a64%7D.s-jib%7Bfill%3A%23c2432b%7D.s-sea%7Bstroke%3A%231f3a64%7D%40media%20%28prefers-color-scheme%3A%20dark%29%7B.s-main%7Bfill%3A%23f2eee3%7D.s-jib%7Bfill%3A%23f08262%7D.s-sea%7Bstroke%3A%23f2eee3%7D%7D%3C%2Fstyle%3E%3Cpath%20d%3D%27M15.5%201%20L15.5%2019%20L4%2019%20Q11%2011%2015.5%201Z%27%20class%3D%27s-main%27%2F%3E%3Cpath%20d%3D%27M18%203%20Q26.5%2010.5%2028%2019%20L18%2019Z%27%20class%3D%27s-jib%27%2F%3E%3Cg%20class%3D%27s-sea%27%20fill%3D%27none%27%20stroke-width%3D%272.4%27%3E%3Cpath%20d%3D%27M1.2%2031%20A7.8%207.8%200%200%201%2016.8%2031%27%2F%3E%3Cpath%20d%3D%27M5.4%2031%20A3.6%203.6%200%200%201%2012.6%2031%27%2F%3E%3Cpath%20d%3D%27M15.2%2031%20A7.8%207.8%200%200%201%2030.8%2031%27%2F%3E%3Cpath%20d%3D%27M19.4%2031%20A3.6%203.6%200%200%201%2026.6%2031%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E">
 <link rel="preload" href="fonts/source-serif-4-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/source-sans-3-normal.woff2" as="font" type="font/woff2" crossorigin>
-<script>try { const t = localStorage.getItem("theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}</script>
+<script>
+{{include: theme.js}}
+</script>
 <style>
-  @font-face { font-family: "Source Serif 4"; src: url("fonts/source-serif-4-normal.woff2") format("woff2"); font-weight: 200 900; font-style: normal; font-display: swap; }
-  @font-face { font-family: "Source Serif 4"; src: url("fonts/source-serif-4-italic.woff2") format("woff2"); font-weight: 200 900; font-style: italic; font-display: swap; }
-  @font-face { font-family: "Source Sans 3"; src: url("fonts/source-sans-3-normal.woff2") format("woff2"); font-weight: 200 900; font-style: normal; font-display: swap; }
-  @font-face { font-family: "Source Code Pro"; src: url("fonts/source-code-pro-normal.woff2") format("woff2"); font-weight: 200 900; font-style: normal; font-display: swap; }
-  @font-face { font-family: "Noto Serif JP"; src: url("fonts/noto-serif-jp.woff2") format("woff2"); font-weight: 500; font-display: swap; }
-
-  :root {
-    color-scheme: light dark;
-    --paper: light-dark(#f8f5ee, #131a2a);
-    --ink: light-dark(#1c2740, #e9e5da);
-    --name: light-dark(#1f3a64, #f2eee3);
-    --soft: light-dark(#4f5868, #b4bbc9);
-    --faint: light-dark(#676f7d, #8d95a6);
-    --rule: light-dark(#dad5c9, #273352);
-    --accent: light-dark(#c2432b, #f08262);
-    --sakura: light-dark(#f2b8c6, #d98da1);
-    --sakura-deep: light-dark(#e6889f, #e9a4b6);
-    --sakura-text: light-dark(#9c5c6c, #e9a4b6);
-    --rose: light-dark(#b8202e, #da5864);
-    --wave-light: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2240%22%20height%3D%2220%22%20viewBox%3D%220%200%2040%2020%22%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%22-10%22%20r%3D%2220%22%20fill%3D%22%23f8f5ee%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%22-10%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%22-10%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%22-10%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%2220%22%20fill%3D%22%23f8f5ee%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%220%22%20r%3D%2220%22%20fill%3D%22%23f8f5ee%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%220%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%220%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%220%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2210%22%20r%3D%2220%22%20fill%3D%22%23f8f5ee%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2210%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2210%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2210%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%2220%22%20fill%3D%22%23f8f5ee%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2220%22%20r%3D%2220%22%20fill%3D%22%23f8f5ee%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2220%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2220%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2220%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2230%22%20r%3D%2220%22%20fill%3D%22%23f8f5ee%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2230%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2230%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2230%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%231f3a64%22%20stroke-width%3D%22.8%22%2F%3E%3C%2Fsvg%3E");
-
-    --serif: "Source Serif 4", Georgia, serif;
-    --sans: "Source Sans 3", system-ui, -apple-system, sans-serif;
-    --mono: "Source Code Pro", ui-monospace, Menlo, monospace;
-    --jp: "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", serif;
-
-    --fs-label: 0.875rem;
-    --fs-small: 0.9375rem;
-    --fs-body: 1.125rem;
-    --fs-lead: 1.5rem;
-    --fs-title: 1.5rem;
-    --fs-focus: clamp(1.5rem, 1.1rem + 1.5vw, 2rem);
-    --fs-name: clamp(2.9rem, 1.6rem + 5.8vw, 6rem);
-    --wave-dark: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2240%22%20height%3D%2220%22%20viewBox%3D%220%200%2040%2020%22%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%22-10%22%20r%3D%2220%22%20fill%3D%22%23131a2a%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%22-10%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%22-10%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%22-10%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%2220%22%20fill%3D%22%23131a2a%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%220%22%20r%3D%2220%22%20fill%3D%22%23131a2a%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%220%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%220%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%220%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2210%22%20r%3D%2220%22%20fill%3D%22%23131a2a%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2210%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2210%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2210%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%2220%22%20fill%3D%22%23131a2a%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2220%22%20r%3D%2220%22%20fill%3D%22%23131a2a%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2220%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2220%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2220%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2230%22%20r%3D%2220%22%20fill%3D%22%23131a2a%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2230%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2230%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2230%22%20r%3D%225%22%20fill%3D%22none%22%20stroke%3D%22%23e9e5da%22%20stroke-width%3D%22.8%22%2F%3E%3C%2Fsvg%3E");
-    --wave: var(--wave-light);
-  }
-
-  :root[data-theme="light"] { color-scheme: light; }
-  :root[data-theme="dark"] { color-scheme: dark; --wave: var(--wave-dark); --wave-opacity: .16; }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) { --wave: var(--wave-dark); --wave-opacity: .16; }
-  }
-
-  * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
-  body { overflow-x: clip; }
-  body {
-    margin: 0;
-    background: var(--paper);
-    color: var(--ink);
-    font: 400 var(--fs-body)/1.6 var(--sans);
-    -webkit-font-smoothing: antialiased;
-  }
-  p, li, dd { text-wrap: pretty; }
-  h1, h2, h3 { text-wrap: balance; }
-  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 32px; }
-  [lang="ja"] { font-family: var(--jp); }
-  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-
-  a { color: inherit; text-decoration: none; background: linear-gradient(var(--accent), var(--accent)) 0 100% / 100% 1px no-repeat; transition: background-size .25s ease, color .2s; }
-  a:hover { color: var(--accent); background-size: 100% 2px; }
-  a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 2px; }
-
-  .label { margin: 0; font: 500 var(--fs-label)/1.3 var(--mono); letter-spacing: 0.02em; color: var(--faint); }
-  .label::before { content: "// "; color: var(--accent); }
-
-  /* ---------- Hero ---------- */
-  .hero { position: relative; padding: 120px 0 96px; }
-  .hero::before {
-    content: ""; position: absolute; inset: -40px -40vw 0; z-index: 0; pointer-events: none;
-    background:
-      radial-gradient(30% 60% at 72% 35%, color-mix(in srgb, var(--sakura) 22%, transparent), transparent 70%);
-  }
-  .hero > * { position: relative; z-index: 2; }
-  .hero .label { color: var(--accent); display: flex; align-items: center; }
-  .hero .label .mark { width: 26px; height: 26px; flex: none; margin-right: 12px; }
-  .sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
-  .theme { position: absolute; top: 40px; right: 0; z-index: 3; width: 40px; height: 40px; display: grid; place-items: center;
-    border: 1px solid var(--rule); border-radius: 50%; background: var(--paper); color: var(--soft); cursor: pointer; transition: color .2s, border-color .2s; }
-  .theme:hover { color: var(--accent); border-color: var(--accent); }
-  .theme:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-  .theme svg { width: 18px; height: 18px; fill: currentColor; stroke: currentColor; }
-  .theme .sun { display: none; }
-  :root[data-theme="dark"] .theme .sun { display: block; }
-  :root[data-theme="dark"] .theme .moon { display: none; }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) .theme .sun { display: block; }
-    :root:not([data-theme="light"]) .theme .moon { display: none; }
-  }
-  .s-main { fill: var(--name); }
-  .s-jib { fill: var(--accent); }
-  .s-sea { stroke: var(--name); }
-  .hero .label::before { content: none; }
-  .hero h1 {
-    font-family: var(--serif);
-    font-weight: 450;
-    font-size: var(--fs-name);
-    line-height: 1;
-    letter-spacing: -0.025em;
-    margin: 22px 0 0;
-    color: var(--name);
-    font-variation-settings: "opsz" 60;
-  }
-  .origin { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 22px; margin: 18px 0 0; color: var(--soft); font-size: var(--fs-body); }
-  .origin [lang="ja"] { font-size: 1.2em; letter-spacing: 0.08em; color: var(--name); }
-  .origin .route { font-family: var(--mono); font-size: var(--fs-small); color: var(--ink); }
-  .origin .route b { font-weight: 400; color: var(--accent); padding: 0 0.4em; }
-  .focus { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: var(--fs-focus); line-height: 1.35; margin: 40px 0 0; font-variation-settings: "opsz" 40; }
-  .focus { display: flex; flex-wrap: wrap; column-gap: 0.35em; }
-  .focus span { white-space: nowrap; }
-  .focus em { font-style: normal; color: var(--accent); margin-left: 0.35em; }
-  .facts { display: flex; flex-wrap: wrap; gap: 8px 28px; margin: 22px 0 0; padding: 0; list-style: none; color: var(--soft); font-size: var(--fs-small); }
-  .facts li { display: flex; align-items: baseline; gap: 10px; }
-  .facts li::before { content: ""; flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); transform: translateY(-2px); }
-  .links { display: flex; flex-wrap: wrap; gap: 12px 32px; margin: 40px 0 0; padding: 0; list-style: none; font-weight: 500; }
-
-  /* Seigaiha wave field */
-  .wave { position: absolute; inset: -40px -40vw 0; z-index: 1; pointer-events: none; opacity: var(--wave-opacity, .22); overflow: hidden;
-    -webkit-mask-image: radial-gradient(34% 95% at 74% 38%, #000 10%, transparent 72%); mask-image: radial-gradient(34% 95% at 74% 38%, #000 10%, transparent 72%); }
-  .wave::before { content: ""; position: absolute; inset: 0 -400px 0 0; background: var(--wave) 0 0 / 40px 20px repeat; }
-
-  /* ---------- Sections ---------- */
-  section.block { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 20px 56px; padding: 80px 0; border-top: 1px solid var(--rule); }
-  section.block > .label { padding-top: 6px; position: sticky; top: 32px; align-self: start; }
-
-  .about p { margin: 0 0 1em; max-width: 62ch; color: var(--soft); }
-  .about p.lead { font-family: var(--serif); font-size: var(--fs-lead); line-height: 1.5; color: var(--ink); font-weight: 400; margin-bottom: 1.1em; font-variation-settings: "opsz" 24; }
-
-  ol.work { list-style: none; margin: 0; padding: 0; counter-reset: w; }
-  ol.work li { counter-increment: w; display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 8px 16px; padding: 28px 0; border-bottom: 1px solid var(--rule); }
-  ol.work li:first-child { padding-top: 0; }
-  ol.work li:last-child { border-bottom: 0; padding-bottom: 0; }
-  ol.work li::before { content: counter(w, decimal-leading-zero); grid-row: span 2; font-family: var(--mono); font-weight: 300; font-size: 1.75rem; line-height: 1.2; color: var(--accent); }
-  ol.work h3 { margin: 4px 0 0; font: 500 var(--fs-label)/1.3 var(--mono); color: var(--faint); }
-  ol.work p { margin: 0; max-width: 62ch; }
-
-  /* Experience as a route map */
-  .roles { position: relative; margin: 0; padding: 0; list-style: none; }
-  .zone { font: 500 var(--fs-label)/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; padding: 0 0 18px 44px; position: relative; }
-  .zone.ldn { color: var(--rose); }
-  .zone.tyo { color: var(--sakura-text); padding-top: 22px; }
-  .zone.tyo::before { background: var(--sakura-deep); left: 11px; top: -2px; height: 17px; bottom: auto; transform-origin: 50% 0; transform: rotate(45deg); border-radius: 0 0 2px 2px; }
-  .zone.tyo::after { content: ""; position: absolute; left: -1px; top: 10px; bottom: 0; width: 4px; background: var(--sakura-deep); }
-  .zone::before { content: ""; position: absolute; left: 11px; top: -2px; bottom: 0; width: 4px; background: currentColor; }
-  .zone.ldn::before { top: 4px; border-radius: 2px 2px 0 0; }
-  .role { position: relative; display: grid; grid-template-columns: 116px minmax(0, 1fr); gap: 6px 28px; padding: 0 0 40px 44px; }
-  .role::before { content: ""; position: absolute; left: var(--x, 11px); top: 0; bottom: 0; width: 4px; background: var(--line); }
-  .role::after { content: ""; position: absolute; left: calc(var(--x, 11px) - 4px); top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--paper); border: 3px solid var(--line); box-sizing: border-box; }
-  .role.ldn { --line: var(--rose); }
-  .role.tyo { --line: var(--sakura-deep); --x: -1px; }
-  .role.ldn:first-of-type::after { background: var(--line); box-shadow: 0 0 0 4px color-mix(in srgb, var(--line) 25%, transparent); }
-  .role:last-child { padding-bottom: 8px; }
-  .role:last-child::before { bottom: auto; height: 10px; }
-  .role .when { margin: 0; color: var(--faint); font: 400 var(--fs-small)/1.5 var(--mono); padding-top: 4px; }
-  .role h3 { margin: 0; font-family: var(--serif); font-weight: 500; font-size: var(--fs-title); line-height: 1.3; letter-spacing: -0.01em; color: var(--name); font-variation-settings: "opsz" 24; }
-  .role h3 span { display: block; margin-top: 2px; color: var(--soft); font: 500 var(--fs-body)/1.4 var(--sans); letter-spacing: 0; }
-  .role .summary { margin: 10px 0 0; color: var(--soft); max-width: 62ch; }
-  .role details { margin-top: 12px; }
-  .role summary { cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 8px; font: 500 var(--fs-label)/1.3 var(--mono); color: var(--accent); padding: 6px 0; }
-  .role summary::-webkit-details-marker { display: none; }
-  .role summary::before { content: "+"; font-size: 1.1rem; transition: transform .2s ease; display: inline-block; width: 0.7em; }
-  .role details[open] summary::before { transform: rotate(45deg); }
-  .role details ul { margin: 10px 0 0; padding: 0 0 0 1.1em; max-width: 62ch; }
-  .role details li { margin: 0 0 8px; }
-  .role details li::marker { color: var(--accent); }
-  .role details[open] ul { animation: unfold .3s ease both; }
-
-  dl.stack { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 40px; margin: 0; }
-  dl.stack dt { font: 500 var(--fs-label)/1.3 var(--mono); color: var(--faint); margin-bottom: 8px; }
-  dl.stack dd { margin: 0; }
-
-  /* ---------- How this page is built ---------- */
-  dl.decisions { display: grid; gap: 14px; margin: 0; }
-  dl.decisions div { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 16px; align-items: baseline; }
-  dl.decisions dt { font: 500 var(--fs-label)/1.3 var(--mono); color: var(--faint); }
-  dl.decisions dd { margin: 0; color: var(--ink); }
-  .motifs { margin: 36px 0 0; padding: 32px 0 0; border-top: 1px solid var(--rule); list-style: none; display: grid; gap: 14px; }
-  .motifs li { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 16px; align-items: center; }
-  .motifs p { margin: 0; color: var(--soft); font-size: var(--fs-small); }
-  .motifs b { color: var(--ink); font-weight: 500; margin-right: 0.4em; }
-  .motifs svg, .m-wave, .m-colours { width: 40px; height: 32px; }
-  .m-wave { border-radius: 4px; background: var(--wave) 0 0 / 20px 10px repeat; }
-  .m-route path { fill: none; stroke-width: 3; stroke-linejoin: round; }
-  .m-route .m-tyo { stroke: var(--sakura-deep); }
-  .m-route .m-ldn { stroke: var(--rose); }
-  .m-route circle { fill: var(--paper); stroke: var(--ink); stroke-width: 2; }
-  .m-route .m-now { fill: var(--rose); stroke: var(--rose); }
-  .m-colours { display: flex; gap: 6px; align-items: center; }
-  .m-colours i { width: 16px; height: 16px; border-radius: 50%; background: #1f3a64; box-shadow: 0 0 0 1px var(--rule); }
-  .m-colours i + i { background: #c2432b; }
-
-  footer.site { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; padding: 32px 0 48px; border-top: 1px solid var(--rule);
-    font: 400 var(--fs-small)/1.4 var(--mono); color: var(--faint); }
-  footer.site .who { display: flex; align-items: center; gap: 12px; }
-  footer.site .mark { width: 22px; height: 22px; }
-  footer.site a { margin-left: auto; color: var(--soft); }
-
-  /* ---------- Contact row ---------- */
-  .links.contact { align-items: center; }
-  .copied { margin-left: 12px; font: 400 var(--fs-label)/1 var(--mono); color: var(--faint); }
-
-  /* ---------- Motion ---------- */
-  @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
-  @keyframes unfold { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
-  .hero > *:not(.wave):not(.theme) { animation: rise .8s cubic-bezier(.2,.7,.2,1) both; }
-  .hero > *:nth-child(2) { animation-delay: .08s; }
-  .hero > *:nth-child(3) { animation-delay: .16s; }
-  .hero > *:nth-child(4) { animation-delay: .26s; }
-  .hero > *:nth-child(5) { animation-delay: .36s; }
-  .hero > *:nth-child(6) { animation-delay: .46s; }
-  .wave { animation: rise 1.6s ease both; }
-
-  @keyframes drift { to { translate: -40px 0; } }
-  @keyframes reveal { from { opacity: 0; translate: 0 24px; } }
-  @keyframes draw { from { scale: 1 0; } }
-  @keyframes pop { from { scale: 0; } }
-  @keyframes fade { from { opacity: 0; } }
-  @media (prefers-reduced-motion: no-preference) {
-    .wave::before { animation: drift 12s ease-in-out infinite alternate; }
-    @supports (animation-timeline: view()) {
-      section.block { animation: reveal linear both; animation-timeline: view(); animation-range: entry 0% entry 70%; }
-      .role, .zone { view-timeline-name: --stop; view-timeline-axis: block; }
-      .role::before, .zone.ldn::before, .zone.tyo::after { transform-origin: top; animation: draw linear both; animation-timeline: --stop; animation-range: entry 45vh entry calc(100% + 45vh); }
-      .zone.tyo::before { animation: fade linear both; animation-timeline: --stop; animation-range: entry 40vh entry 45vh; }
-      .role::after { animation: pop linear both; animation-timeline: --stop; animation-range: entry 45vh entry calc(45vh + 24px); }
-    }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation: none !important; transition: none !important; }
-  }
-
-  @media (max-width: 1100px) {
-    .hero::before { display: none; }
-    .wave { inset: -40px -32px 0; -webkit-mask-image: radial-gradient(70% 55% at 100% 22%, #000 10%, transparent 75%), linear-gradient(to bottom, #000 70%, transparent 100%); -webkit-mask-composite: source-in; mask-image: radial-gradient(70% 55% at 100% 22%, #000 10%, transparent 75%), linear-gradient(to bottom, #000 70%, transparent 100%); mask-composite: intersect; }
-  }
-
-  @media (max-width: 380px) {
-    .hero .label .city { display: none; }
-  }
-
-  /* ---------- Small screens ---------- */
-  @media (max-width: 760px) {
-    .wrap { padding: 0 20px; }
-    .hero { padding: 64px 0 56px; }
-    .theme { top: 16px; width: 36px; height: 36px; }
-    .hero .label { letter-spacing: 0; }
-    .hero .label .mark { width: 20px; height: 20px; margin-right: 8px; }
-    .wave { inset: -40px -20px 0; -webkit-mask-image: radial-gradient(65% 30% at 100% 88%, #000 10%, transparent 75%), linear-gradient(to bottom, #000 70%, transparent 100%); -webkit-mask-composite: source-in; mask-image: radial-gradient(65% 30% at 100% 88%, #000 10%, transparent 75%), linear-gradient(to bottom, #000 70%, transparent 100%); mask-composite: intersect; }
-    .focus { margin-top: 30px; flex-direction: column; row-gap: 2px; }
-    .focus em { display: none; }
-    .about p.lead { font-size: 1.3rem; }
-    section.block { grid-template-columns: minmax(0, 1fr); gap: 20px; padding: 56px 0; }
-    section.block > .label { position: static; padding-top: 0; }
-    ol.work li { grid-template-columns: 44px minmax(0, 1fr); gap: 6px 12px; }
-    .role { grid-template-columns: minmax(0, 1fr); gap: 4px; padding-left: 36px; }
-    .zone { padding-left: 36px; }
-    .role .when { padding-top: 0; }
-    dl.stack { grid-template-columns: minmax(0, 1fr); }
-    dl.decisions div, .motifs li { grid-template-columns: 64px minmax(0, 1fr); gap: 12px; }
-    footer.site { flex-direction: column; align-items: flex-start; }
-    footer.site a { margin-left: 0; }
-  }
+{{include: styles.css}}
 </style>
 </head>
 <body>
-<main class="wrap">
+<div class="wrap">
 
   <svg class="sprite" aria-hidden="true"><symbol id="sail" viewBox="0 0 32 32"><path d="M15.5 1 L15.5 19 L4 19 Q11 11 15.5 1Z" class="s-main"/><path d="M18 3 Q26.5 10.5 28 19 L18 19Z" class="s-jib"/><g class="s-sea" fill="none" stroke-width="2.4"><path d="M1.2 31 A7.8 7.8 0 0 1 16.8 31"/><path d="M5.4 31 A3.6 3.6 0 0 1 12.6 31"/><path d="M15.2 31 A7.8 7.8 0 0 1 30.8 31"/><path d="M19.4 31 A3.6 3.6 0 0 1 26.6 31"/></g></symbol></svg>
   <header class="hero">
     <div class="wave" aria-hidden="true"></div>
     <button class="theme" type="button" aria-label="Switch colour theme" hidden><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"/></svg><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><g stroke-width="2" stroke-linecap="round"><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></g></svg></button>
-    <p class="label"><svg class="mark" aria-hidden="true"><use href="#sail"/></svg>{{role}}<span class="city">&nbsp;· {{city}}</span></p>
+    <p class="label" data-one-line><svg class="mark" aria-hidden="true"><use href="#sail"/></svg>{{role}}<span class="city">&nbsp;· {{city}}</span></p>
     <h1>Kazuho Shibuya</h1>
-    <p class="origin"><span lang="ja">澁谷 一帆</span><span class="route">Tokyo<b aria-hidden="true">→</b><span class="visually-hidden">to</span>London</span></p>
+    <p class="origin" data-one-line><span lang="ja">澁谷 一帆</span><span class="route">Tokyo<b aria-hidden="true">→</b><span class="visually-hidden">to</span>London</span></p>
     <p class="focus">{{focus}}</p>
     <ul class="facts">
       <li>{{skills}}</li>
       <li>{{years}}</li>
     </ul>
-    <ul class="links contact">
+    <ul class="links contact" data-one-line>
       <li><a href="https://www.linkedin.com/in/kazuho-shibuya">LinkedIn</a></li>
       <li><a href="https://github.com/kazuho-shibuya">GitHub</a></li>
       <li><a class="email" href="mailto:k.shibuya.tech@gmail.com" data-copy="k.shibuya.tech@gmail.com">Email</a><span class="copied" role="status" aria-live="polite"></span></li>
     </ul>
   </header>
 
+  <main>
   <section class="block about" aria-labelledby="about">
     <h2 class="label" id="about">About</h2>
     <div>
@@ -338,52 +80,34 @@
     </dl>
   </section>
 
+  <section class="block colophon" aria-labelledby="built">
+    <h2 class="label" id="built">How it's built</h2>
+    <div>
+      <dl class="decisions">
+        <div><dt>Source</dt><dd>Generated from the same file as my LinkedIn profile, so the two never disagree.</dd></div>
+        <div><dt>Quality</dt><dd>Nothing deploys until unit, browser and accessibility tests pass in three browsers.</dd></div>
+        <div><dt>Security</dt><dd>A strict Content Security Policy that allows only the page's own code, plus HSTS.</dd></div>
+        <div><dt>Stack</dt><dd>Static HTML · Python · Playwright · GitHub Actions · Cloudflare</dd></div>
+        <div><dt>Method</dt><dd>Built with Claude Code from plans I wrote and reviewed.</dd></div>
+      </dl>
+      <ul class="motifs">
+        <li><svg class="m-sail" aria-hidden="true"><use href="#sail"/></svg><p><b>帆, the sail</b> From my name, 一帆, “one sail”.</p></li>
+        <li><div class="m-wave" aria-hidden="true"></div><p><b>青海波, the waves</b> A Japanese pattern, drawn by the page.</p></li>
+        <li><svg viewBox="0 0 80 40" class="m-route" aria-hidden="true"><path d="M8 32 H30 L46 16 H72" class="m-tyo"/><path d="M46 16 H72" class="m-ldn"/><circle cx="12" cy="32" r="4"/><circle cx="26" cy="32" r="4"/><circle cx="52" cy="16" r="4"/><circle cx="68" cy="16" r="4" class="m-now"/></svg><p><b>The route</b> My experience as a line from Tokyo to London.</p></li>
+        <li><div class="m-colours" aria-hidden="true"><i></i><i></i></div><p><b>藍 and 朱, the colours</b> Indigo, named “Japan Blue” by a British chemist, and vermilion.</p></li>
+      </ul>
+    </div>
+  </section>
+  </main>
 
-<section class="block colophon" aria-labelledby="built">
-  <h2 class="label" id="built">How it's built</h2>
-  <div>
-    <dl class="decisions">
-      <div><dt>Source</dt><dd>Generated from the same file as my LinkedIn profile, so the two never disagree.</dd></div>
-      <div><dt>Quality</dt><dd>Nothing deploys until browser and accessibility tests pass in Chrome and Safari.</dd></div>
-      <div><dt>Stack</dt><dd>Static HTML · Python · Playwright · GitHub Actions · Cloudflare</dd></div>
-      <div><dt>Method</dt><dd>Built with Claude Code from plans I wrote and reviewed.</dd></div>
-    </dl>
-    <ul class="motifs">
-      <li><svg class="m-sail" aria-hidden="true"><use href="#sail"/></svg><p><b>帆, the sail</b> From my name, 一帆, “one sail”.</p></li>
-      <li><div class="m-wave" aria-hidden="true"></div><p><b>青海波, the waves</b> A Japanese pattern, drawn by the page.</p></li>
-      <li><svg viewBox="0 0 80 40" class="m-route"><path d="M8 32 H30 L46 16 H72" class="m-tyo"/><path d="M46 16 H72" class="m-ldn"/><circle cx="12" cy="32" r="4"/><circle cx="26" cy="32" r="4"/><circle cx="52" cy="16" r="4"/><circle cx="68" cy="16" r="4" class="m-now"/></svg><p><b>The route</b> My experience as a line from Tokyo to London.</p></li>
-      <li><div class="m-colours" aria-hidden="true"><i></i><i></i></div><p><b>藍 and 朱, the colours</b> Indigo, named “Japan Blue” by a British chemist, and vermilion.</p></li>
-    </ul>
-  </div>
-</section>
-
-
-  <footer class="site">
-    <span class="who"><svg class="mark" aria-hidden="true"><use href="#sail"/></svg>Kazuho Shibuya · London</span>
-    <a href="https://github.com/kazuho-shibuya/kazuhoshibuya.com">Source on GitHub</a>
+  <footer class="site" data-one-line>
+    <span class="who"><svg class="mark" aria-hidden="true"><use href="#sail"/></svg>Kazuho Shibuya<span class="place"> · London</span></span>
+    <a href="https://github.com/kazuho-shibuya/kazuhoshibuya.com" aria-label="Source on GitHub">Source<span class="more"> on GitHub</span></a>
   </footer>
 
-</main>
+</div>
 <script>
-  for (const link of document.querySelectorAll("a[data-copy]")) {
-    link.addEventListener("click", async (event) => {
-      if (!navigator.clipboard) return;
-      event.preventDefault();
-      await navigator.clipboard.writeText(link.dataset.copy);
-      link.nextElementSibling.textContent = `Copied ${link.dataset.copy}`;
-    });
-  }
-  const root = document.documentElement;
-  const toggle = document.querySelector("button.theme");
-  const isDark = () => (root.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")) === "dark";
-  const label = () => toggle.setAttribute("aria-label", isDark() ? "Switch to light mode" : "Switch to dark mode");
-  toggle.hidden = false;
-  label();
-  toggle.addEventListener("click", () => {
-    root.dataset.theme = isDark() ? "light" : "dark";
-    try { localStorage.setItem("theme", root.dataset.theme); } catch (e) {}
-    label();
-  });
+{{include: page.js}}
 </script>
 </body>
 </html>

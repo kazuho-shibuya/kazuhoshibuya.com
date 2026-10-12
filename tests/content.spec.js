@@ -24,7 +24,9 @@ test("every font file loads", async ({ page }) => {
 
 test("every mailto link goes to the one address", async ({ page }) => {
   await open(page, DESKTOP);
-  for (const link of await page.locator('a[href^="mailto:"]').all()) {
+  const links = await page.locator('a[href^="mailto:"]').all();
+  expect(links.length).toBeGreaterThan(0);
+  for (const link of links) {
     await expect(link).toHaveAttribute("href", `mailto:${EMAIL}`);
   }
 });
@@ -47,6 +49,17 @@ test("Email copies the address and says so", async ({ page, context, browserName
   expect(page.url()).not.toContain("mailto:");
 });
 
+test("when copying fails, Email falls back to the mail link", async ({ page }) => {
+  await page.addInitScript(() =>
+    Object.defineProperty(navigator, "clipboard", { value: { writeText: () => Promise.reject(new Error("denied")) } }),
+  );
+  await open(page, PHONE);
+  // A same-page address stands in for mailto:, which a test browser cannot follow.
+  await page.locator(".links.contact a.email").evaluate((a) => (a.href = "/#mail"));
+  await page.locator(".links.contact a.email").click();
+  await expect(page).toHaveURL(/#mail$/);
+});
+
 test("external links point where they say", async ({ page }) => {
   await open(page, DESKTOP);
   const hrefs = await page.locator('a[href^="http"]').evaluateAll((links) => links.map((a) => a.href));
@@ -57,11 +70,12 @@ test("external links point where they say", async ({ page }) => {
 });
 
 test("GitHub links open", async ({ page, request }) => {
+  test.skip(!process.env.LIVE, "calls github.com, so it runs with the live checks only");
   await open(page, DESKTOP);
   const hrefs = await page.locator('a[href^="https://github.com"]').evaluateAll((links) => [...new Set(links.map((a) => a.href))]);
   for (const href of hrefs) {
-    const res = await request.get(href);
-    expect(res.status(), href).toBe(200);
+    const status = async () => (await request.get(href)).status();
+    await expect.poll(status, { message: href, intervals: [2_000, 5_000], timeout: 15_000 }).toBe(200);
   }
 });
 
@@ -77,4 +91,19 @@ test("the route map has two London stations and three Tokyo stations", async ({ 
   await open(page, DESKTOP);
   await expect(page.locator(".role.ldn")).toHaveCount(2);
   await expect(page.locator(".role.tyo")).toHaveCount(3);
+});
+
+test("How it's built claims only what the repo does: three browsers, unit tests, and the security policy", async ({ page }) => {
+  await open(page, DESKTOP);
+  const rows = Object.fromEntries(
+    await page
+      .locator(".decisions div")
+      .evaluateAll((all) => all.map((d) => [d.querySelector("dt").textContent, d.querySelector("dd").textContent])),
+  );
+  expect(Object.keys(rows)).toEqual(["Source", "Quality", "Security", "Stack", "Method"]);
+  expect(rows.Quality).toContain("unit, browser and accessibility tests");
+  expect(rows.Quality).toContain("three browsers");
+  expect(rows.Security).toContain("Content Security Policy");
+  const config = require("../playwright.config.js");
+  expect(config.projects.length, "the number of browsers the Quality row claims").toBe(3);
 });

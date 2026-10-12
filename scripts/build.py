@@ -9,7 +9,8 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-TEMPLATE = ROOT / "src/template.html"
+SRC = ROOT / "src"
+TEMPLATE = SRC / "template.html"
 OUTPUT = ROOT / "public/index.html"
 HEADERS = ROOT / "public/_headers"
 SOURCE = ROOT.parent / "life-tracker/projects/career/artefacts/linkedin.md"
@@ -40,10 +41,12 @@ def section(md, heading):
     return match.group(1)
 
 
-def first_block(text):
+def first_block(text, where):
     match = re.search(r"```\n(.*?)\n```", text, flags=re.DOTALL)
     if not match:
-        raise BuildError("expected a fenced block")
+        raise BuildError(f"{where} has no fenced block")
+    if not match.group(1).strip():
+        raise BuildError(f"{where} has an empty fenced block")
     return match.group(1)
 
 
@@ -52,15 +55,31 @@ def paragraphs(block):
 
 
 def parse(md, london_companies=LONDON_COMPANIES):
-    headline = first_block(section(md, "1. Headline")).strip()
-    role, skills, focus, years, city = [p.strip() for p in headline.split("|")]
+    headline = first_block(section(md, "1. Headline"), "the headline").strip()
+    parts = [p.strip() for p in headline.split("|")]
+    if len(parts) != 5:
+        raise BuildError(f"the headline needs 5 parts separated by '|', found {len(parts)}")
+    role, skills, focus, years, city = parts
 
-    about = paragraphs(first_block(section(md, "2. About")))
-    stack = [tuple(line.split(": ", 1)) for line in about[-1].splitlines()]
+    about = paragraphs(first_block(section(md, "2. About"), "About"))
+    stack_lines = about[-1].splitlines()
+    unlabelled = [line for line in stack_lines if ": " not in line]
+    if unlabelled:
+        raise BuildError(f"stack lines need 'Label: value': {unlabelled}")
+    stack = [tuple(line.split(": ", 1)) for line in stack_lines]
+
+    experience = section(md, "5. Experience")
+    found = ROLE_HEADING.findall(experience)
+    headings = re.findall(r"^### ", experience, flags=re.MULTILINE)
+    if not found or len(found) != len(headings):
+        raise BuildError(f"role headings must read '### Title, Company (dates)'; matched {len(found)} of {len(headings)}")
 
     roles = []
-    for title, company, dates, body in ROLE_HEADING.findall(section(md, "5. Experience")):
-        lines = first_block(body).splitlines()
+    for title, company, dates, body in found:
+        lines = first_block(body, f"role '{title}, {company}'").splitlines()
+        bullets = [line[1:].strip() for line in lines if line.startswith("•")]
+        if not bullets:
+            raise BuildError(f"role '{title}, {company}' has no '•' bullets")
         roles.append(
             {
                 "title": title,
@@ -68,7 +87,7 @@ def parse(md, london_companies=LONDON_COMPANIES):
                 "dates": dates,
                 "city": "ldn" if company in london_companies else "tyo",
                 "summary": lines[0].strip(),
-                "bullets": [line[1:].strip() for line in lines if line.startswith("•")],
+                "bullets": bullets,
             }
         )
 
@@ -137,11 +156,26 @@ def bullet(roles, prefix):
     return esc(found[0])
 
 
+def include_files(template, folder=SRC):
+    def contents(match):
+        path = folder / match.group(1)
+        if not path.exists():
+            raise BuildError(f"the template includes {match.group(1)}, which is not in {folder.name}/")
+        contents = path.read_text().rstrip("\n")
+        if "{{" in contents:
+            raise BuildError(f"{match.group(1)} contains a placeholder; only the template may have them")
+        return contents
+
+    return re.sub(r"\{\{include: (.+?)\}\}", contents, template)
+
+
 def render(template, data):
     page = template.replace("{{headline}}", esc(data["headline"]))
-    page = page.replace("{{role}}", esc(data["role"])).replace("{{city}}", esc(data["city"]))
+    page = page.replace("{{role}}", esc(data["role"]))
+    page = page.replace("{{city}}", esc(data["city"]))
     page = page.replace("{{focus}}", focus_html(data["focus"]))
-    page = page.replace("{{skills}}", esc(data["skills"])).replace("{{years}}", esc(data["years"]))
+    page = page.replace("{{skills}}", esc(data["skills"]))
+    page = page.replace("{{years}}", esc(data["years"]))
     page = page.replace("{{about}}", about_html(data["about"]))
     page = page.replace("{{experience}}", experience_html(data["roles"]))
     page = page.replace("{{stack}}", stack_html(data["stack"]))
@@ -158,8 +192,11 @@ def csp_hash(code):
 
 def headers_file(page):
     """Cloudflare's _headers file: a strict policy that allows only this page's own inline code."""
-    scripts = [csp_hash(code) for code in re.findall(r"<script>(.*?)</script>", page, flags=re.DOTALL)]
-    styles = [csp_hash(code) for code in re.findall(r"<style>(.*?)</style>", page, flags=re.DOTALL)]
+    with_attributes = re.findall(r"<style\s[^>]*>|<script\s(?![^>]*\bsrc=)[^>]*>", page, flags=re.IGNORECASE)
+    if with_attributes:
+        raise BuildError(f"inline script and style tags must have no attributes, or the policy gets no hash for them: {with_attributes}")
+    scripts = [csp_hash(code) for code in re.findall(r"<script>(.*?)</script>", page, flags=re.DOTALL | re.IGNORECASE)]
+    styles = [csp_hash(code) for code in re.findall(r"<style>(.*?)</style>", page, flags=re.DOTALL | re.IGNORECASE)]
     policy = "; ".join(
         [
             "default-src 'none'",
@@ -193,9 +230,10 @@ def main():
         return 1
     try:
         data = parse(SOURCE.read_text())
-        page = render(TEMPLATE.read_text(), data)
+        page = render(include_files(TEMPLATE.read_text()), data)
+        headers = headers_file(page)
         OUTPUT.write_text(page)
-        HEADERS.write_text(headers_file(page))
+        HEADERS.write_text(headers)
     except BuildError as error:
         print(f"build failed: {error}", file=sys.stderr)
         return 1

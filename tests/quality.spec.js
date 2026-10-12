@@ -11,7 +11,7 @@ test("the only scripts are the theme choice, the page script and Cloudflare's vi
   const all = await page.locator("script").evaluateAll((els) => els.map((s) => s.src || `inline: ${s.textContent.trim().slice(0, 60)}`));
   const ours = all.filter((s) => !s.startsWith("https://static.cloudflareinsights.com/beacon.min.js"));
   expect(ours, `scripts on the page: ${JSON.stringify(all)}`).toEqual([
-    expect.stringMatching(/^inline: try \{ const t = localStorage\.getItem\("theme"\)/),
+    expect.stringMatching(/^inline: try \{\s+const t = localStorage\.getItem\("theme"\)/),
     expect.stringMatching(/^inline: for \(const link of document\.querySelectorAll\("a\[data-copy\]"/),
   ]);
 });
@@ -25,6 +25,12 @@ for (const scheme of ["light", "dark"]) {
     expect(summary).toEqual([]);
   });
 }
+
+test("the header and footer sit outside main, so screen readers find them as landmarks", async ({ page }) => {
+  await open(page, DESKTOP);
+  await expect(page.locator("main")).toHaveCount(1);
+  await expect(page.locator("main header, main footer")).toHaveCount(0);
+});
 
 const PUBLIC = path.join(__dirname, "../public");
 
