@@ -26,6 +26,12 @@ for (const scheme of ["light", "dark"]) {
   });
 }
 
+test("the header and footer sit outside main, so screen readers find them as landmarks", async ({ page }) => {
+  await open(page, DESKTOP);
+  await expect(page.locator("main")).toHaveCount(1);
+  await expect(page.locator("main header, main footer")).toHaveCount(0);
+});
+
 const PUBLIC = path.join(__dirname, "../public");
 
 // Reads public/_headers into { name: value } for the "/*" block.

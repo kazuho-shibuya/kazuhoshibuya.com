@@ -24,7 +24,9 @@ test("every font file loads", async ({ page }) => {
 
 test("every mailto link goes to the one address", async ({ page }) => {
   await open(page, DESKTOP);
-  for (const link of await page.locator('a[href^="mailto:"]').all()) {
+  const links = await page.locator('a[href^="mailto:"]').all();
+  expect(links.length).toBeGreaterThan(0);
+  for (const link of links) {
     await expect(link).toHaveAttribute("href", `mailto:${EMAIL}`);
   }
 });
@@ -68,6 +70,7 @@ test("external links point where they say", async ({ page }) => {
 });
 
 test("GitHub links open", async ({ page, request }) => {
+  test.skip(!process.env.LIVE, "calls github.com, so it runs with the live checks only");
   await open(page, DESKTOP);
   const hrefs = await page.locator('a[href^="https://github.com"]').evaluateAll((links) => [...new Set(links.map((a) => a.href))]);
   for (const href of hrefs) {

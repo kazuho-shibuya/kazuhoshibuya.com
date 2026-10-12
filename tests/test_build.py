@@ -54,6 +54,26 @@ class ParseTest(unittest.TestCase):
         with self.assertRaisesRegex(build.BuildError, "Label: value"):
             build.parse(broken, london_companies={"Acme"})
 
+    def test_a_role_heading_in_another_shape_is_an_error(self):
+        broken = FIXTURE.replace("### Engineer, Acme (Jan 2023 – Jan 2025)", "### Engineer at Acme, 2023 to 2025")
+        with self.assertRaisesRegex(build.BuildError, "matched 2 of 3"):
+            build.parse(broken, london_companies={"Acme"})
+
+    def test_a_role_without_bullets_is_an_error(self):
+        broken = FIXTURE.replace("\n\n• Wrote the deployment scripts.", "")
+        with self.assertRaisesRegex(build.BuildError, "'Developer, Widgets, Inc.' has no"):
+            build.parse(broken, london_companies={"Acme"})
+
+    def test_a_role_without_a_fenced_block_names_the_role(self):
+        broken = FIXTURE.replace("```\nBuilt internal tools.\n\n• Wrote the deployment scripts.\n```", "Built internal tools.")
+        with self.assertRaisesRegex(build.BuildError, "'Developer, Widgets, Inc.' has no fenced block"):
+            build.parse(broken, london_companies={"Acme"})
+
+    def test_an_empty_fenced_block_is_an_error(self):
+        broken = FIXTURE.replace("```\nBuilt internal tools.\n\n• Wrote the deployment scripts.\n```", "```\n\n```")
+        with self.assertRaisesRegex(build.BuildError, "empty fenced block"):
+            build.parse(broken, london_companies={"Acme"})
+
 
 class RenderTest(unittest.TestCase):
     def setUp(self):
@@ -91,6 +111,24 @@ class HeadersTest(unittest.TestCase):
             self.assertIn(build.csp_hash(code), csp)
         self.assertEqual(csp.count("'sha256-"), 3)
         self.assertNotIn("unsafe-inline", csp)
+
+    def test_an_inline_script_or_style_with_attributes_is_an_error(self):
+        for page in ['<script type="module">x()</script>', '<style media="print">a{}</style>']:
+            with self.subTest(page=page), self.assertRaisesRegex(build.BuildError, "attributes"):
+                build.headers_file(page)
+
+
+class CommittedPageTest(unittest.TestCase):
+    def test_every_fixed_line_of_the_template_reaches_the_committed_page_in_order(self):
+        """CI cannot rebuild without the private source, so this catches a template edit that was never built."""
+        page = (ROOT / "public/index.html").read_text()
+        position = 0
+        for line in (ROOT / "src/template.html").read_text().splitlines():
+            if not line.strip() or "{{" in line:
+                continue
+            found = page.find(line, position)
+            self.assertNotEqual(found, -1, f"run npm run build; public/index.html lacks: {line.strip()[:80]}")
+            position = found + len(line)
 
 
 if __name__ == "__main__":

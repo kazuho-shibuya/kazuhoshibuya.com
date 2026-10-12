@@ -276,7 +276,7 @@
 </style>
 </head>
 <body>
-<main class="wrap">
+<div class="wrap">
 
   <svg class="sprite" aria-hidden="true"><symbol id="sail" viewBox="0 0 32 32"><path d="M15.5 1 L15.5 19 L4 19 Q11 11 15.5 1Z" class="s-main"/><path d="M18 3 Q26.5 10.5 28 19 L18 19Z" class="s-jib"/><g class="s-sea" fill="none" stroke-width="2.4"><path d="M1.2 31 A7.8 7.8 0 0 1 16.8 31"/><path d="M5.4 31 A3.6 3.6 0 0 1 12.6 31"/><path d="M15.2 31 A7.8 7.8 0 0 1 30.8 31"/><path d="M19.4 31 A3.6 3.6 0 0 1 26.6 31"/></g></symbol></svg>
   <header class="hero">
@@ -297,6 +297,7 @@
     </ul>
   </header>
 
+  <main>
   <section class="block about" aria-labelledby="about">
     <h2 class="label" id="about">About</h2>
     <div>
@@ -357,13 +358,14 @@
       </ul>
     </div>
   </section>
+  </main>
 
   <footer class="site" data-one-line>
     <span class="who"><svg class="mark" aria-hidden="true"><use href="#sail"/></svg>Kazuho Shibuya<span class="place"> · London</span></span>
     <a href="https://github.com/kazuho-shibuya/kazuhoshibuya.com" aria-label="Source on GitHub">Source<span class="more"> on GitHub</span></a>
   </footer>
 
-</main>
+</div>
 <script>
   for (const link of document.querySelectorAll("a[data-copy]")) {
     link.addEventListener("click", async (event) => {

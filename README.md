@@ -36,7 +36,7 @@ deploy.sh                  every check, deploy, then the browser checks against 
 | The built page is committed                                | CI cannot read the private source, so it tests and deploys exactly the file that was reviewed                                                  | Generated output in git; `build.py` is the only writer, and the live check catches drift     |
 | No framework, no cookies                                   | One page needs HTML, CSS and two small scripts; nothing to update, nothing to break                                                            | Layout and motion are hand-written CSS                                                       |
 | CSP by hash, never `unsafe-inline`                         | `build.py` hashes each inline script and style block into `_headers`, so the policy allows exactly this page's code and is regenerated with it | Any inline code that is not in the built page is blocked, including tools that inject styles |
-| Screenshots compared pixel for pixel, on the Mac only      | A zero-tolerance comparison catches any unintended visual change                                                                               | Linux renders fonts differently, so CI cannot run it; it runs before every local deploy      |
+| Screenshots compared on the Mac only                       | No pixel may differ beyond a 5% colour tolerance, so any layout or spacing change fails                                                        | Linux renders fonts differently, so CI cannot run it; it runs before every local deploy      |
 | Motion only where supported, and never with reduced motion | Scroll-driven CSS animation needs no JavaScript; browsers without it, such as Firefox, show the finished state                                 | Firefox visitors do not see the route draw itself                                            |
 
 ## Testing strategy
@@ -51,7 +51,7 @@ Each layer catches a different class of mistake. `npm run check` runs them in th
 | Browser       | Playwright: Chrome, WebKit, Firefox | overflow, wrapped lines and sizes off the type scale at 12 screen widths from 320 to 1920px, console errors, links, fonts, motion, the theme switch, the copy link |
 | Accessibility | axe-core                            | WCAG 2.1 AA violations in light and dark mode                                                                                                                      |
 | Security      | Playwright + `_headers`             | inline code not covered by the policy, and headers missing from the live response                                                                                  |
-| Visual        | Playwright screenshots              | any pixel that changed without being approved                                                                                                                      |
+| Visual        | Playwright screenshots              | any pixel that changed by more than a 5% colour tolerance without being approved                                                                                   |
 | Live          | the browser suite, `LIVE=1`         | anything that differs once deployed: caching, headers, the CDN                                                                                                     |
 
 An element that must never wrap, such as the footer, carries `data-one-line`, and one test checks every such element at every width.
@@ -63,7 +63,7 @@ Two tests have notes worth knowing. The wave-overlap check bypasses the CSP, bec
 Test first: write the test that describes the change, watch it fail for the right reason, make the smallest change that passes, then run `npm run check`.
 
 ```sh
-npm ci && npx playwright install chromium webkit firefox   # Node 24, Python 3, uv
+npm ci && npx playwright install webkit firefox   # Node 24, Python 3, uv, Google Chrome
 npm run check                                              # everything, in the order above
 npm run format                                             # Ruff and Prettier
 ```

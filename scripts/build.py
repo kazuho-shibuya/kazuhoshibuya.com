@@ -40,10 +40,12 @@ def section(md, heading):
     return match.group(1)
 
 
-def first_block(text):
+def first_block(text, where):
     match = re.search(r"```\n(.*?)\n```", text, flags=re.DOTALL)
     if not match:
-        raise BuildError("expected a fenced block")
+        raise BuildError(f"{where} has no fenced block")
+    if not match.group(1).strip():
+        raise BuildError(f"{where} has an empty fenced block")
     return match.group(1)
 
 
@@ -52,22 +54,31 @@ def paragraphs(block):
 
 
 def parse(md, london_companies=LONDON_COMPANIES):
-    headline = first_block(section(md, "1. Headline")).strip()
+    headline = first_block(section(md, "1. Headline"), "the headline").strip()
     parts = [p.strip() for p in headline.split("|")]
     if len(parts) != 5:
         raise BuildError(f"the headline needs 5 parts separated by '|', found {len(parts)}")
     role, skills, focus, years, city = parts
 
-    about = paragraphs(first_block(section(md, "2. About")))
+    about = paragraphs(first_block(section(md, "2. About"), "About"))
     stack_lines = about[-1].splitlines()
     unlabelled = [line for line in stack_lines if ": " not in line]
     if unlabelled:
         raise BuildError(f"stack lines need 'Label: value': {unlabelled}")
     stack = [tuple(line.split(": ", 1)) for line in stack_lines]
 
+    experience = section(md, "5. Experience")
+    found = ROLE_HEADING.findall(experience)
+    headings = re.findall(r"^### ", experience, flags=re.MULTILINE)
+    if not found or len(found) != len(headings):
+        raise BuildError(f"role headings must read '### Title, Company (dates)'; matched {len(found)} of {len(headings)}")
+
     roles = []
-    for title, company, dates, body in ROLE_HEADING.findall(section(md, "5. Experience")):
-        lines = first_block(body).splitlines()
+    for title, company, dates, body in found:
+        lines = first_block(body, f"role '{title}, {company}'").splitlines()
+        bullets = [line[1:].strip() for line in lines if line.startswith("•")]
+        if not bullets:
+            raise BuildError(f"role '{title}, {company}' has no '•' bullets")
         roles.append(
             {
                 "title": title,
@@ -75,7 +86,7 @@ def parse(md, london_companies=LONDON_COMPANIES):
                 "dates": dates,
                 "city": "ldn" if company in london_companies else "tyo",
                 "summary": lines[0].strip(),
-                "bullets": [line[1:].strip() for line in lines if line.startswith("•")],
+                "bullets": bullets,
             }
         )
 
@@ -165,6 +176,9 @@ def csp_hash(code):
 
 def headers_file(page):
     """Cloudflare's _headers file: a strict policy that allows only this page's own inline code."""
+    with_attributes = re.findall(r"<(?:script|style)\s(?![^>]*\bsrc=)[^>]*>", page)
+    if with_attributes:
+        raise BuildError(f"inline script and style tags must have no attributes, or the policy gets no hash for them: {with_attributes}")
     scripts = [csp_hash(code) for code in re.findall(r"<script>(.*?)</script>", page, flags=re.DOTALL)]
     styles = [csp_hash(code) for code in re.findall(r"<style>(.*?)</style>", page, flags=re.DOTALL)]
     policy = "; ".join(
