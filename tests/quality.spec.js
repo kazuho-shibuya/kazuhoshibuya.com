@@ -40,7 +40,9 @@ function productionHeaders() {
 }
 
 const inlineHashes = (html, tag) =>
-  [...html.matchAll(new RegExp(`<${tag}>([\\s\\S]*?)</${tag}>`, "g"))].map((m) => `'sha256-${crypto.createHash("sha256").update(m[1]).digest("base64")}'`);
+  [...html.matchAll(new RegExp(`<${tag}>([\\s\\S]*?)</${tag}>`, "g"))].map(
+    (m) => `'sha256-${crypto.createHash("sha256").update(m[1]).digest("base64")}'`,
+  );
 
 test("the headers file sets the security headers and allows exactly the page's inline code", async () => {
   const headers = productionHeaders();
@@ -67,7 +69,9 @@ test("the page runs under the production headers with no policy violations", asy
   });
   await page.addInitScript(() => {
     window.__violations = [];
-    document.addEventListener("securitypolicyviolation", (e) => window.__violations.push(`${e.violatedDirective}: ${e.blockedURI || "inline"}`));
+    document.addEventListener("securitypolicyviolation", (e) =>
+      window.__violations.push(`${e.violatedDirective}: ${e.blockedURI || "inline"}`),
+    );
   });
   if (browserName === "chromium") await context.grantPermissions(["clipboard-read", "clipboard-write"]);
   await open(page, DESKTOP);

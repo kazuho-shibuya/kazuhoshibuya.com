@@ -59,9 +59,7 @@ def parse(md, london_companies=LONDON_COMPANIES):
     stack = [tuple(line.split(": ", 1)) for line in about[-1].splitlines()]
 
     roles = []
-    for title, company, dates, body in ROLE_HEADING.findall(
-        section(md, "5. Experience")
-    ):
+    for title, company, dates, body in ROLE_HEADING.findall(section(md, "5. Experience")):
         lines = first_block(body).splitlines()
         roles.append(
             {
@@ -89,9 +87,7 @@ def parse(md, london_companies=LONDON_COMPANIES):
 
 def focus_html(focus):
     items = [esc(f) for f in focus]
-    spans = [f"<span>{item}<em>·</em></span>" for item in items[:-1]] + [
-        f"<span>{items[-1]}</span>"
-    ]
+    spans = [f"<span>{item}<em>·</em></span>" for item in items[:-1]] + [f"<span>{items[-1]}</span>"]
     return "".join(spans)
 
 
@@ -131,36 +127,25 @@ def experience_html(roles):
 
 
 def stack_html(stack):
-    return "\n".join(
-        f"      <div><dt>{esc(label)}</dt><dd>{esc(value)}</dd></div>"
-        for label, value in stack
-    )
+    return "\n".join(f"      <div><dt>{esc(label)}</dt><dd>{esc(value)}</dd></div>" for label, value in stack)
 
 
 def bullet(roles, prefix):
     found = [b for r in roles for b in r["bullets"] if b.startswith(prefix)]
     if len(found) != 1:
-        raise BuildError(
-            f"selected-work prefix {prefix!r} matched {len(found)} bullets in linkedin.md"
-        )
+        raise BuildError(f"selected-work prefix {prefix!r} matched {len(found)} bullets in linkedin.md")
     return esc(found[0])
 
 
 def render(template, data):
     page = template.replace("{{headline}}", esc(data["headline"]))
-    page = page.replace("{{role}}", esc(data["role"])).replace(
-        "{{city}}", esc(data["city"])
-    )
+    page = page.replace("{{role}}", esc(data["role"])).replace("{{city}}", esc(data["city"]))
     page = page.replace("{{focus}}", focus_html(data["focus"]))
-    page = page.replace("{{skills}}", esc(data["skills"])).replace(
-        "{{years}}", esc(data["years"])
-    )
+    page = page.replace("{{skills}}", esc(data["skills"])).replace("{{years}}", esc(data["years"]))
     page = page.replace("{{about}}", about_html(data["about"]))
     page = page.replace("{{experience}}", experience_html(data["roles"]))
     page = page.replace("{{stack}}", stack_html(data["stack"]))
-    page = re.sub(
-        r"\{\{bullet: (.+?)\}\}", lambda m: bullet(data["roles"], m.group(1)), page
-    )
+    page = re.sub(r"\{\{bullet: (.+?)\}\}", lambda m: bullet(data["roles"], m.group(1)), page)
     leftover = re.findall(r"\{\{.*?\}\}", page)
     if leftover:
         raise BuildError(f"unfilled placeholders: {leftover}")
@@ -202,9 +187,7 @@ def headers_file(page):
 def main():
     if not SOURCE.exists():
         if os.environ.get("CI"):
-            print(
-                f"skipped: {SOURCE.name} is private and not available in CI; checking the committed page"
-            )
+            print(f"skipped: {SOURCE.name} is private and not available in CI; checking the committed page")
             return 0
         print(f"missing {SOURCE}", file=sys.stderr)
         return 1
@@ -216,9 +199,7 @@ def main():
     except BuildError as error:
         print(f"build failed: {error}", file=sys.stderr)
         return 1
-    print(
-        f"built {OUTPUT.relative_to(ROOT)} from linkedin.md: {len(data['roles'])} roles, {len(data['about'])} about paragraphs"
-    )
+    print(f"built {OUTPUT.relative_to(ROOT)} from linkedin.md: {len(data['roles'])} roles, {len(data['about'])} about paragraphs")
     return 0
 
 

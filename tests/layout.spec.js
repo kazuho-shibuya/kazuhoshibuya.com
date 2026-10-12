@@ -2,7 +2,11 @@ const { test, expect } = require("@playwright/test");
 const { PNG } = require("pngjs");
 const { DESKTOP, TABLET, PHONE, SMALL_PHONE, open } = require("./helpers");
 
-for (const [name, viewport] of [["desktop", DESKTOP], ["tablet", TABLET], ["phone", PHONE]]) {
+for (const [name, viewport] of [
+  ["desktop", DESKTOP],
+  ["tablet", TABLET],
+  ["phone", PHONE],
+]) {
   test(`${name}: the page cannot scroll sideways`, async ({ page }) => {
     await open(page, viewport);
     const scrollX = await page.evaluate(() => {
@@ -43,10 +47,15 @@ test("phone: the focus line is three short lines with no dots", async ({ page })
   await expect(page.locator(".focus em").first()).toBeHidden();
 });
 
-for (const [name, viewport] of [["phone", PHONE], ["small phone", SMALL_PHONE]]) {
+for (const [name, viewport] of [
+  ["phone", PHONE],
+  ["small phone", SMALL_PHONE],
+]) {
   test(`${name}: the top label with the sail stays on one line`, async ({ page }) => {
     await open(page, viewport);
-    const lines = await page.locator(".hero .label").evaluate((el) => Math.round(el.getBoundingClientRect().height / parseFloat(getComputedStyle(el).lineHeight)));
+    const lines = await page
+      .locator(".hero .label")
+      .evaluate((el) => Math.round(el.getBoundingClientRect().height / parseFloat(getComputedStyle(el).lineHeight)));
     expect(lines).toBe(1);
   });
 }
@@ -80,7 +89,12 @@ test("the footer carries the mark, the name and the source link", async ({ page 
 });
 
 // The wave may sit faintly behind text: at most 8% change in any colour channel (20 of 255), on every screen size.
-for (const [name, viewport, limit] of [["desktop", DESKTOP, 20], ["tablet", TABLET, 20], ["phone", PHONE, 20], ["small phone", SMALL_PHONE, 20]]) {
+for (const [name, viewport, limit] of [
+  ["desktop", DESKTOP, 20],
+  ["tablet", TABLET, 20],
+  ["phone", PHONE, 20],
+  ["small phone", SMALL_PHONE, 20],
+]) {
   test(`${name}: the wave pattern behind the top text stays within ${limit} of 255`, async ({ page }) => {
     await open(page, viewport);
     // The boxes of the letters themselves, not of the full-width blocks that hold them.

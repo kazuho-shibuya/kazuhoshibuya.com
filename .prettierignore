@@ -1,0 +1,8 @@
+node_modules
+public
+test-results
+tests/screenshots
+.wrangler
+package-lock.json
+# Whitespace between inline elements is part of the rendering; html-validate checks this file instead.
+src/template.html

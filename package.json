@@ -5,7 +5,9 @@
   "scripts": {
     "build": "python3 scripts/build.py",
     "test:unit": "python3 -m unittest discover tests",
-    "check": "npm run test:unit && python3 scripts/build.py && html-validate public/index.html && playwright test",
+    "lint": "uvx ruff check scripts tests && uvx ruff format --check scripts tests && prettier --check .",
+    "format": "uvx ruff format scripts tests && prettier --write .",
+    "check": "npm run lint && npm run test:unit && python3 scripts/build.py && html-validate public/index.html && playwright test",
     "screenshots:update": "playwright test -g \"looks the same\" --project chrome --update-snapshots",
     "deploy": "./deploy.sh"
   },
@@ -15,6 +17,7 @@
     "fontkit": "^2.0.4",
     "html-validate": "^11.16.2",
     "pngjs": "^7.0.0",
+    "prettier": "^3.9.10",
     "wrangler": "^4.149.0"
   }
 }

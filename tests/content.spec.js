@@ -14,7 +14,9 @@ test("the Japanese name is 澁谷 一帆, and the shipped font file contains eve
 
 test("every font file loads", async ({ page }) => {
   await open(page, DESKTOP);
-  const loaded = await page.evaluate(() => [...document.fonts].filter((f) => f.status === "loaded").map((f) => f.family.replaceAll('"', "")));
+  const loaded = await page.evaluate(() =>
+    [...document.fonts].filter((f) => f.status === "loaded").map((f) => f.family.replaceAll('"', "")),
+  );
   for (const family of ["Source Serif 4", "Source Sans 3", "Source Code Pro", "Noto Serif JP"]) {
     expect(loaded).toContain(family);
   }

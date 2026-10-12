@@ -13,6 +13,7 @@ jobs:
         with:
           node-version: 24
           cache: npm
+      - uses: astral-sh/setup-uv@v6
       - run: npm ci
       - run: npx playwright install --with-deps webkit firefox
       - run: npm run check

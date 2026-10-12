@@ -20,7 +20,10 @@ test("with motion allowed, the wave drifts and the sections and route map animat
   }
 });
 
-for (const [name, viewport] of [["desktop", DESKTOP], ["phone", PHONE]]) {
+for (const [name, viewport] of [
+  ["desktop", DESKTOP],
+  ["phone", PHONE],
+]) {
   test(`${name}: after scrolling to the bottom, every scroll animation has finished`, async ({ page }) => {
     test.setTimeout(60_000);
     await page.emulateMedia({ reducedMotion: "no-preference" });

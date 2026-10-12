@@ -3,30 +3,45 @@
 My personal site: one static HTML page served by a Cloudflare Worker. Built with Claude Code from plans I wrote and reviewed.
 
 ```
-src/template.html  the page layout, styles and the text that belongs to the site itself
-scripts/build.py   fills the template from my LinkedIn text and writes public/index.html
-public/            the built page and self-hosted fonts (generated, committed)
-tests/             Playwright checks, and approved screenshots under tests/screenshots
-wrangler.jsonc     Cloudflare Worker config and custom domains
-deploy.sh          builds, runs every check, then deploys
+src/template.html          the layout, styles and the text that belongs to the site itself
+scripts/build.py           fills the template from my LinkedIn text; writes public/index.html and public/_headers
+scripts/subset-jp-font.sh  rebuilds the Japanese font with only the characters the page uses
+public/                    the built page, its headers file and self-hosted fonts (generated, committed)
+tests/                     unit tests for the build, browser tests by concern, approved screenshots
+wrangler.jsonc             Cloudflare Worker config and custom domains
+deploy.sh                  every check, deploy, then the browser checks against the live site
 ```
 
-## One source for the words
+## Design decisions
 
-The headline, About, Experience, Selected work and Stack come from one file: my LinkedIn text, kept in a private repo beside this one. `build.py` reads it and writes the page, so the site cannot say something LinkedIn does not. It stops without writing anything if a section is missing or a selected highlight no longer exists. Edit the words there, never in `public/index.html`.
+- **One source for the words.** The headline, About, Experience, Selected work and Stack are generated from my LinkedIn text, kept in a private repo beside this one, so the site cannot say something LinkedIn does not. The build stops without writing anything if a section is missing or a selected highlight no longer exists.
+- **Nothing deploys unchecked.** Every push runs the full suite; the deploy job runs only after it passes, then re-runs the browser checks against the live site.
+- **A strict Content Security Policy.** `build.py` hashes each inline script and style block of the built page into `public/_headers`, so the policy allows exactly the page's own code and never `unsafe-inline`.
+- **No framework, no cookies.** Two small inline scripts: the theme switch and the Email copy link. Cloudflare adds a cookie-free visitor count.
+
+## Working on it
+
+Test first. Write or change the test that describes the behaviour, run it and watch it fail for the right reason, then make the smallest change that passes, then `npm run check`.
+
+| Change                 | Edit                                  | Then                                                                               |
+| ---------------------- | ------------------------------------- | ---------------------------------------------------------------------------------- |
+| Words                  | the LinkedIn text in the private repo | `./deploy.sh` (CI cannot read that file)                                           |
+| Layout, styles, design | `src/template.html`                   | `npm run build`, check the screenshots, `npm run screenshots:update` once approved |
+| Japanese text          | `src/template.html`                   | `scripts/subset-jp-font.sh`; a test fails if a character has no glyph              |
+| Build logic            | `scripts/build.py`                    | `npm run test:unit`                                                                |
+
+`npm run format` formats Python with Ruff and everything else with Prettier.
 
 ## Checks
 
 `npm run check` runs, in order:
 
-1. **Build** from the LinkedIn text. CI cannot read the private file, so it skips this step and checks the committed page.
-2. **HTML**: `html-validate` with the recommended rules.
-3. **Browser** (Playwright, in Chrome, Safari's WebKit and Firefox, at desktop, tablet and phone widths): no sideways scroll and no text past the edge, no console errors or failed requests, every font loads, the focus line fits one line on desktop, every mailto link uses the one address, the contact section shows it and the Copy button copies it, external links go where they say and the GitHub ones open, Highlights expand, the route map has the right stations, the only script is the inline copy script, and no WCAG 2.1 AA accessibility violations in light or dark mode. Locally it also compares full-page screenshots against the approved ones in Chrome; CI skips that because Linux renders fonts differently. LinkedIn links are checked for their address only: LinkedIn blocks automated visits.
+1. **Lint**: Ruff for Python, Prettier for the rest. The template is excluded from Prettier because whitespace between inline elements is part of the rendering.
+2. **Unit tests** for `build.py`, against a made-up fixture so they run anywhere.
+3. **Build** from the LinkedIn text. CI cannot read the private file, so it skips this step and checks the committed page.
+4. **HTML**: `html-validate` with the recommended rules.
+5. **Browser tests** with Playwright in Chrome, Safari's WebKit and Firefox, at desktop, tablet and phone widths, split by concern: `layout`, `content`, `motion`, `theme`, `quality` (scripts, security headers, WCAG 2.1 AA in light and dark) and `visual` (full-page screenshots, compared pixel for pixel in Chrome on the Mac; CI skips them because Linux renders fonts differently). LinkedIn links are checked for their address only, because LinkedIn blocks automated visits.
 
 ## Deploy
 
-Push to `main`. GitHub Actions runs every check, deploys to Cloudflare, then runs the browser checks again against https://kazuhoshibuya.com. The deploy needs a `CLOUDFLARE_API_TOKEN` repository secret.
-
-From the Mac, `./deploy.sh` does the same, and is the only way a LinkedIn text change gets built, because CI cannot read that file.
-
-After an approved design change, refresh the reference screenshots with `npm run screenshots:update`.
+Push to `main`. GitHub Actions runs every check, deploys to Cloudflare, waits for the new version, then runs the browser checks against https://kazuhoshibuya.com, including that the live response carries the headers from `public/_headers`. The deploy needs a `CLOUDFLARE_API_TOKEN` repository secret. Dependabot proposes dependency updates weekly.

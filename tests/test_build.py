@@ -25,9 +25,7 @@ class ParseTest(unittest.TestCase):
 
     def test_about_keeps_the_paragraphs_and_moves_the_last_block_to_the_stack(self):
         self.assertEqual(len(self.data["about"]), 2)
-        self.assertEqual(
-            self.data["stack"], [("Languages", "Go, Rust"), ("Data", "Redis, Kafka")]
-        )
+        self.assertEqual(self.data["stack"], [("Languages", "Go, Rust"), ("Data", "Redis, Kafka")])
 
     def test_roles_keep_a_comma_in_the_company_name(self):
         companies = [r["company"] for r in self.data["roles"]]
