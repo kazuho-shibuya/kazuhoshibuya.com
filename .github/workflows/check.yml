@@ -1,4 +1,4 @@
-name: check
+name: check and deploy
 
 on:
   push:
@@ -14,4 +14,30 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - run: npx playwright install --with-deps webkit
       - run: npm run check
+
+  deploy:
+    needs: check
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Deploy to Cloudflare
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::warning::CLOUDFLARE_API_TOKEN is not set; skipping deploy"
+            exit 0
+          fi
+          npx wrangler deploy --config wrangler.jsonc
+      - run: npx playwright install --with-deps webkit
+      - name: Check the live site
+        if: env.CLOUDFLARE_API_TOKEN != ''
+        run: LIVE=1 npx playwright test

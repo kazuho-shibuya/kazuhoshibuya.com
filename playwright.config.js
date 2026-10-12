@@ -1,5 +1,8 @@
 const { defineConfig } = require("@playwright/test");
 
+// LIVE=1 runs the same checks against the deployed site instead of a local server.
+const live = !!process.env.LIVE;
+
 module.exports = defineConfig({
   testDir: "tests",
   timeout: 20_000,
@@ -7,12 +10,17 @@ module.exports = defineConfig({
   reporter: "line",
   snapshotPathTemplate: "tests/screenshots/{arg}{ext}",
   use: {
-    baseURL: "http://127.0.0.1:4173",
-    channel: "chrome",
+    baseURL: live ? "https://kazuhoshibuya.com" : "http://127.0.0.1:4173",
   },
-  webServer: {
-    command: "python3 -m http.server 4173 --bind 127.0.0.1 --directory public",
-    url: "http://127.0.0.1:4173",
-    reuseExistingServer: !process.env.CI,
-  },
+  projects: [
+    { name: "chrome", use: { channel: "chrome" } },
+    { name: "safari", use: { browserName: "webkit" } },
+  ],
+  webServer: live
+    ? undefined
+    : {
+        command: "python3 -m http.server 4173 --bind 127.0.0.1 --directory public",
+        url: "http://127.0.0.1:4173",
+        reuseExistingServer: !process.env.CI,
+      },
 });

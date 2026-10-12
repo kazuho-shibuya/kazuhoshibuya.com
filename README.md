@@ -21,12 +21,12 @@ The headline, About, Experience, Selected work and Stack come from one file: my 
 
 1. **Build** from the LinkedIn text. CI cannot read the private file, so it skips this step and checks the committed page.
 2. **HTML**: `html-validate` with the recommended rules.
-3. **Browser** (Playwright, using installed Chrome): no sideways scroll and no text past the edge on desktop and phone, no console errors or failed requests, every font loads, the focus line fits one line on desktop, the email links are well formed, the external links go where they say, the page loads no scripts. Locally it also compares full-page screenshots against the approved ones; CI skips that because Linux renders fonts differently.
+3. **Browser** (Playwright, in Chrome and Safari's WebKit, at desktop, tablet and phone widths): no sideways scroll and no text past the edge, no console errors or failed requests, every font loads, the focus line fits one line on desktop, every mailto link uses the one address, the contact section shows it and the Copy button copies it, external links go where they say and the GitHub ones open, Highlights expand, the route map has the right stations, the only script is the inline copy script, and no WCAG 2.1 AA accessibility violations in light or dark mode. Locally it also compares full-page screenshots against the approved ones in Chrome; CI skips that because Linux renders fonts differently. LinkedIn links are checked for their address only: LinkedIn blocks automated visits.
 
 ## Deploy
 
-```
-./deploy.sh
-```
+Push to `main`. GitHub Actions runs every check, deploys to Cloudflare, then runs the browser checks again against https://kazuhoshibuya.com. The deploy needs a `CLOUDFLARE_API_TOKEN` repository secret.
+
+From the Mac, `./deploy.sh` does the same, and is the only way a LinkedIn text change gets built, because CI cannot read that file.
 
 After an approved design change, refresh the reference screenshots with `npm run screenshots:update`.

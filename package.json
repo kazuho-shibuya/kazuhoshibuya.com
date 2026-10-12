@@ -5,11 +5,13 @@
   "scripts": {
     "build": "python3 scripts/build.py",
     "check": "python3 scripts/build.py && html-validate public/index.html && playwright test",
-    "screenshots:update": "playwright test -g \"looks the same\" --update-snapshots",
+    "screenshots:update": "playwright test -g \"looks the same\" --project chrome --update-snapshots",
     "deploy": "./deploy.sh"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@playwright/test": "^1.64.0",
-    "html-validate": "^11.16.2"
+    "html-validate": "^11.16.2",
+    "wrangler": "^4.149.0"
   }
 }

@@ -1,5 +1,6 @@
 {
   "name": "kazuhoshibuya",
+  "account_id": "33b32c08d5f0921a25ae3598364a22b8",
   "compatibility_date": "2026-10-01",
   "assets": { "directory": "./public" },
   "routes": [

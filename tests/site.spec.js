@@ -1,7 +1,10 @@
 const { test, expect } = require("@playwright/test");
+const AxeBuilder = require("@axe-core/playwright").default;
 
 const DESKTOP = { width: 1440, height: 900 };
+const TABLET = { width: 820, height: 1180 };
 const PHONE = { width: 390, height: 844 };
+const EMAIL = "k.shibuya.tech@gmail.com";
 
 async function open(page, viewport, colorScheme = "light") {
   const problems = [];
@@ -15,7 +18,7 @@ async function open(page, viewport, colorScheme = "light") {
   return problems;
 }
 
-for (const [name, viewport] of [["desktop", DESKTOP], ["phone", PHONE]]) {
+for (const [name, viewport] of [["desktop", DESKTOP], ["tablet", TABLET], ["phone", PHONE]]) {
   test(`${name}: the page cannot scroll sideways`, async ({ page }) => {
     await open(page, viewport);
     const scrollX = await page.evaluate(() => {
@@ -48,7 +51,7 @@ test("desktop: the focus line sits on one line", async ({ page }) => {
   expect(new Set(tops).size).toBe(1);
 });
 
-test("every font file loads and is used", async ({ page }) => {
+test("every font file loads", async ({ page }) => {
   await open(page, DESKTOP);
   const loaded = await page.evaluate(() => [...document.fonts].filter((f) => f.status === "loaded").map((f) => f.family.replaceAll('"', "")));
   for (const family of ["Source Serif 4", "Source Sans 3", "Source Code Pro", "Noto Serif JP"]) {
@@ -56,24 +59,53 @@ test("every font file loads and is used", async ({ page }) => {
   }
 });
 
-test("email links are one well-formed address, shown as Email", async ({ page }) => {
+test("every mailto link goes to the one address", async ({ page }) => {
   await open(page, DESKTOP);
-  const mail = page.locator('a[href^="mailto:"]');
-  await expect(mail).toHaveCount(2);
-  for (const link of await mail.all()) {
-    await expect(link).toHaveAttribute("href", "mailto:k.shibuya.tech@gmail.com");
-    await expect(link).toHaveText("Email");
+  for (const link of await page.locator('a[href^="mailto:"]').all()) {
+    await expect(link).toHaveAttribute("href", `mailto:${EMAIL}`);
   }
-  const bodyText = await page.locator("body").innerText();
-  expect(bodyText).not.toContain("k.shibuya.tech@gmail.com");
 });
 
-test("external links are https and point where they say", async ({ page }) => {
+test("the contact section shows the full address", async ({ page }) => {
+  await open(page, DESKTOP);
+  await expect(page.locator("#contact .email")).toHaveText(EMAIL);
+});
+
+test("the copy button puts the address on the clipboard", async ({ page, context, browserName }) => {
+  test.skip(browserName !== "chromium", "clipboard permissions can only be granted in Chromium");
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  await open(page, DESKTOP);
+  const button = page.locator("#contact button.copy");
+  await expect(button).toBeVisible();
+  await button.click();
+  await expect(page.locator("#contact .copied")).toHaveText("Copied");
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(EMAIL);
+});
+
+test("external links point where they say", async ({ page }) => {
   await open(page, DESKTOP);
   const hrefs = await page.locator('a[href^="http"]').evaluateAll((links) => links.map((a) => a.href));
+  expect(hrefs.length).toBeGreaterThan(0);
   for (const href of hrefs) {
     expect(href).toMatch(/^https:\/\/(www\.linkedin\.com\/in\/kazuho-shibuya|github\.com\/kazuho-shibuya)/);
   }
+});
+
+test("GitHub links open", async ({ page, request }) => {
+  await open(page, DESKTOP);
+  const hrefs = await page.locator('a[href^="https://github.com"]').evaluateAll((links) => [...new Set(links.map((a) => a.href))]);
+  for (const href of hrefs) {
+    const res = await request.get(href);
+    expect(res.status(), href).toBe(200);
+  }
+});
+
+test("Highlights open and show the bullets", async ({ page }) => {
+  await open(page, DESKTOP);
+  const first = page.locator(".role details").first();
+  await expect(first.locator("li").first()).toBeHidden();
+  await first.locator("summary").click();
+  await expect(first.locator("li").first()).toBeVisible();
 });
 
 test("the route map has two London stations and three Tokyo stations", async ({ page }) => {
@@ -82,16 +114,29 @@ test("the route map has two London stations and three Tokyo stations", async ({ 
   await expect(page.locator(".role.tyo")).toHaveCount(3);
 });
 
-test("the page loads no scripts", async ({ page }) => {
+test("the only script is the inline copy button script", async ({ page }) => {
   await open(page, DESKTOP);
-  await expect(page.locator("script")).toHaveCount(0);
+  await expect(page.locator("script")).toHaveCount(1);
+  await expect(page.locator("script[src]")).toHaveCount(0);
 });
 
+for (const scheme of ["light", "dark"]) {
+  test(`no accessibility violations in ${scheme} mode`, async ({ page }) => {
+    await open(page, DESKTOP, scheme);
+    await page.locator(".role details").evaluateAll((all) => all.forEach((d) => (d.open = true)));
+    const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
+    const summary = results.violations.map((v) => `${v.id}: ${v.nodes.length} node(s) — ${v.nodes[0].target.join(" ")}`);
+    expect(summary).toEqual([]);
+  });
+}
+
 test.describe("looks the same as the approved version", () => {
-  test.skip(!!process.env.CI, "font rendering differs between macOS and the Linux runner");
+  test.skip(!!process.env.CI || !!process.env.LIVE, "font rendering differs between macOS and Linux; live runs skip it");
+  test.beforeEach(({ browserName }) => test.skip(browserName !== "chromium", "references are taken in Chrome"));
   for (const [name, viewport, scheme] of [
     ["desktop-light", DESKTOP, "light"],
     ["desktop-dark", DESKTOP, "dark"],
+    ["tablet-light", TABLET, "light"],
     ["phone-light", PHONE, "light"],
   ]) {
     test(name, async ({ page }) => {
