@@ -94,6 +94,7 @@ test("in the link preview, the name spans most of the image so it stays readable
   browserName,
 }) => {
   test.skip(browserName !== "chromium", "public/og.png is rendered in Chrome only");
+  test.skip(!!process.env.LIVE, "the preview is rendered locally; the live security policy rightly blocks its injected style");
   await open(page, SIZE);
   await showPreview(page);
   const nameWidth = await page.locator(".hero h1").evaluate(textWidth);
