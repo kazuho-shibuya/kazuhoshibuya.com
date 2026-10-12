@@ -45,7 +45,8 @@ test("search engines get one address, a sitemap, link previews and the profile l
   const person = JSON.parse(await page.locator('script[type="application/ld+json"]').textContent());
   expect(person["@type"]).toBe("Person");
   expect(person.name).toBe("Kazuho Shibuya");
-  expect(person.alternateName).toBe("澁谷 一帆");
+  expect(person.alternateName).toEqual(["澁谷 一帆", "渋谷 一帆", "しぶや かずほ", "シブヤ カズホ"]);
+  expect(await page.title()).toBe("Kazuho Shibuya (澁谷 一帆) — Software Engineer");
   expect(person.url).toBe(home);
   const contactLinks = await page.locator('.links.contact a[href^="https://"]').evaluateAll((links) => links.map((a) => a.href));
   expect(person.sameAs).toEqual(contactLinks);
