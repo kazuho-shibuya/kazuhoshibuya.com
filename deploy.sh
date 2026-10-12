@@ -5,4 +5,5 @@ set -e
 cd "$(dirname "$0")"
 npm run check
 npx wrangler deploy --config wrangler.jsonc
+scripts/wait-live.sh
 LIVE=1 npx playwright test --grep-invert "looks the same"
