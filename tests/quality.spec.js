@@ -61,6 +61,22 @@ test("search engines get one address, a sitemap, link previews and the profile l
   expect(await sitemap.text()).toContain(`<loc>${home}</loc>`);
 });
 
+test("shared links show a 1200x630 preview image with alt text", async ({ page, request }) => {
+  await open(page, DESKTOP);
+  const meta = (property) => page.locator(`meta[property="${property}"]`);
+  await expect(meta("og:image")).toHaveAttribute("content", "https://kazuhoshibuya.com/og.png");
+  await expect(meta("og:image:width")).toHaveAttribute("content", "1200");
+  await expect(meta("og:image:height")).toHaveAttribute("content", "630");
+  await expect(meta("og:image:alt")).toHaveAttribute("content", /Kazuho Shibuya/);
+  await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute("content", "summary_large_image");
+
+  const image = await request.get("/og.png");
+  expect(image.headers()["content-type"]).toBe("image/png");
+  const { PNG } = require("pngjs");
+  const png = PNG.sync.read(await image.body());
+  expect([png.width, png.height]).toEqual([1200, 630]);
+});
+
 const PUBLIC = path.join(__dirname, "../public");
 
 // Reads public/_headers into { name: value } for the "/*" block.

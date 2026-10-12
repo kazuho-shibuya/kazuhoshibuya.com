@@ -26,6 +26,7 @@ scripts/build.py           fills the template from the LinkedIn text; writes pub
 scripts/subset-jp-font.sh  rebuilds the Japanese font with only the characters the page uses
 public/                    the built page, its headers file and self-hosted fonts (generated, committed)
 public/robots.txt, sitemap.xml  written by hand: where search engines start
+scripts/render-og.js       renders public/og.png, the link-preview image, from the built page's header
 tests/                     unit tests for the build, browser tests by concern, approved screenshots
 deploy.sh                  every check, deploy, then the browser checks against the live site
 ```
@@ -77,7 +78,7 @@ npm run format                                             # Ruff and Prettier
 | Japanese text          | `src/template.html`                               | `scripts/subset-jp-font.sh`; a test fails if a character has no glyph               |
 | Build logic            | `scripts/build.py`                                | `npm run test:unit`                                                                 |
 
-Push to `main` to deploy: GitHub Actions runs every check, deploys with `wrangler` using the `CLOUDFLARE_API_TOKEN` repository secret, waits for the new version, then runs the browser suite against the live site. Dependabot proposes dependency updates weekly.
+Merge a PR into `main` to deploy: `main` is protected, so every change arrives through a PR whose checks passed. GitHub Actions then runs every check, deploys with `wrangler` using the `CLOUDFLARE_API_TOKEN` repository secret, waits for the new version, then runs the browser suite against the live site. Dependabot proposes dependency updates weekly.
 
 ## Licence
 
