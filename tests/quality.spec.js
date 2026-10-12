@@ -8,7 +8,9 @@ const { DESKTOP, open } = require("./helpers");
 test("the only scripts are the theme choice, the page script and Cloudflare's visitor count", async ({ page }) => {
   await open(page, DESKTOP);
   // Cloudflare injects its cookie-free Web Analytics beacon into some served pages; the page itself carries two inline scripts.
-  const all = await page.locator("script").evaluateAll((els) => els.map((s) => s.src || `inline: ${s.textContent.trim().slice(0, 60)}`));
+  const all = await page
+    .locator('script:not([type="application/ld+json"])')
+    .evaluateAll((els) => els.map((s) => s.src || `inline: ${s.textContent.trim().slice(0, 60)}`));
   const ours = all.filter((s) => !s.startsWith("https://static.cloudflareinsights.com/beacon.min.js"));
   expect(ours, `scripts on the page: ${JSON.stringify(all)}`).toEqual([
     expect.stringMatching(/^inline: try \{\s+const t = localStorage\.getItem\("theme"\)/),
@@ -30,6 +32,33 @@ test("the header and footer sit outside main, so screen readers find them as lan
   await open(page, DESKTOP);
   await expect(page.locator("main")).toHaveCount(1);
   await expect(page.locator("main header, main footer")).toHaveCount(0);
+});
+
+test("search engines get one address, a sitemap, link previews and the profile links", async ({ page, request }) => {
+  await open(page, DESKTOP);
+  const home = "https://kazuhoshibuya.com/";
+  await expect(page).toHaveTitle("Kazuho Shibuya (澁谷 一帆) — Software Engineer");
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", home);
+  await expect(page.locator('meta[property="og:url"]')).toHaveAttribute("content", home);
+  await expect(page.locator('meta[property="og:title"]')).toHaveAttribute("content", await page.title());
+  await expect(page.locator('meta[property="og:description"]')).toHaveAttribute("content", /\S/);
+
+  const person = JSON.parse(await page.locator('script[type="application/ld+json"]').textContent());
+  expect(person["@type"]).toBe("Person");
+  expect(person.name).toBe("Kazuho Shibuya");
+  expect(person.alternateName).toEqual(["澁谷 一帆", "渋谷 一帆", "しぶや かずほ", "シブヤ カズホ"]);
+  expect(person.url).toBe(home);
+  expect(Object.keys(person)).not.toContain("jobTitle");
+  const contactLinks = await page.locator('.links.contact a[href^="https://"]').evaluateAll((links) => links.map((a) => a.href));
+  expect(person.sameAs).toEqual(contactLinks);
+
+  const robots = await request.get("/robots.txt");
+  expect(robots.ok()).toBe(true);
+  const rules = await robots.text();
+  expect(rules).toContain("User-agent: *\nAllow: /");
+  expect(rules).toContain(`Sitemap: ${home}sitemap.xml`);
+  const sitemap = await request.get("/sitemap.xml");
+  expect(await sitemap.text()).toContain(`<loc>${home}</loc>`);
 });
 
 const PUBLIC = path.join(__dirname, "../public");

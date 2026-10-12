@@ -26,10 +26,6 @@ class BuildError(Exception):
     """The source text or the template is not in the shape the build expects."""
 
 
-def esc(text):
-    return html.escape(text, quote=False)
-
-
 def section(md, heading):
     match = re.search(
         rf"^## {re.escape(heading)}\n(.*?)(?=^## |\Z)",
@@ -105,14 +101,14 @@ def parse(md, london_companies=LONDON_COMPANIES):
 
 
 def focus_html(focus):
-    items = [esc(f) for f in focus]
+    items = [html.escape(f) for f in focus]
     spans = [f"<span>{item}<em>·</em></span>" for item in items[:-1]] + [f"<span>{items[-1]}</span>"]
     return "".join(spans)
 
 
 def about_html(about):
-    out = [f'      <p class="lead">{esc(about[0])}</p>']
-    out += [f"      <p>{esc(p)}</p>" for p in about[1:]]
+    out = [f'      <p class="lead">{html.escape(about[0])}</p>']
+    out += [f"      <p>{html.escape(p)}</p>" for p in about[1:]]
     return "\n".join(out)
 
 
@@ -127,13 +123,17 @@ def experience_html(roles):
             else:
                 out.append(f"      {zone}")
             current_city = r["city"]
-        items = "\n".join(f"              <li>{esc(b)}</li>" for b in r["bullets"])
+        items = "\n".join(f"              <li>{html.escape(b)}</li>" for b in r["bullets"])
+        dates = html.escape(r["dates"])
+        title = html.escape(r["title"])
+        company = html.escape(r["company"])
+        summary = html.escape(r["summary"])
         out.append(
             f'      <li class="role {r["city"]}">\n'
-            f'        <p class="when">{esc(r["dates"])}</p>\n'
+            f'        <p class="when">{dates}</p>\n'
             f"        <div>\n"
-            f"          <h3>{esc(r['title'])} <span>{esc(r['company'])}</span></h3>\n"
-            f'          <p class="summary">{esc(r["summary"])}</p>\n'
+            f"          <h3>{title} <span>{company}</span></h3>\n"
+            f'          <p class="summary">{summary}</p>\n'
             f"          <details>\n"
             f"            <summary>Highlights</summary>\n"
             f"            <ul>\n{items}\n            </ul>\n"
@@ -146,14 +146,19 @@ def experience_html(roles):
 
 
 def stack_html(stack):
-    return "\n".join(f"      <div><dt>{esc(label)}</dt><dd>{esc(value)}</dd></div>" for label, value in stack)
+    rows = []
+    for label, value in stack:
+        term = html.escape(label)
+        description = html.escape(value)
+        rows.append(f"      <div><dt>{term}</dt><dd>{description}</dd></div>")
+    return "\n".join(rows)
 
 
 def bullet(roles, prefix):
     found = [b for r in roles for b in r["bullets"] if b.startswith(prefix)]
     if len(found) != 1:
         raise BuildError(f"selected-work prefix {prefix!r} matched {len(found)} bullets in linkedin.md")
-    return esc(found[0])
+    return html.escape(found[0])
 
 
 def include_files(template, folder=SRC):
@@ -170,12 +175,12 @@ def include_files(template, folder=SRC):
 
 
 def render(template, data):
-    page = template.replace("{{headline}}", esc(data["headline"]))
-    page = page.replace("{{role}}", esc(data["role"]))
-    page = page.replace("{{city}}", esc(data["city"]))
+    page = template.replace("{{headline}}", html.escape(data["headline"]))
+    page = page.replace("{{role}}", html.escape(data["role"]))
+    page = page.replace("{{city}}", html.escape(data["city"]))
     page = page.replace("{{focus}}", focus_html(data["focus"]))
-    page = page.replace("{{skills}}", esc(data["skills"]))
-    page = page.replace("{{years}}", esc(data["years"]))
+    page = page.replace("{{skills}}", html.escape(data["skills"]))
+    page = page.replace("{{years}}", html.escape(data["years"]))
     page = page.replace("{{about}}", about_html(data["about"]))
     page = page.replace("{{experience}}", experience_html(data["roles"]))
     page = page.replace("{{stack}}", stack_html(data["stack"]))
@@ -192,7 +197,10 @@ def csp_hash(code):
 
 def headers_file(page):
     """Cloudflare's _headers file: a strict policy that allows only this page's own inline code."""
-    with_attributes = re.findall(r"<style\s[^>]*>|<script\s(?![^>]*\bsrc=)[^>]*>", page, flags=re.IGNORECASE)
+    # A src script is not inline, and structured data never runs, so neither needs a hash.
+    with_attributes = re.findall(
+        r'<style\s[^>]*>|<script\s(?!type="application/ld\+json">)(?!(?:[^>]*\s)?src=)[^>]*>', page, flags=re.IGNORECASE
+    )
     if with_attributes:
         raise BuildError(f"inline script and style tags must have no attributes, or the policy gets no hash for them: {with_attributes}")
     scripts = [csp_hash(code) for code in re.findall(r"<script>(.*?)</script>", page, flags=re.DOTALL | re.IGNORECASE)]
