@@ -237,7 +237,8 @@
     .wrap { padding: 0 20px; }
     .hero { padding: 64px 0 56px; }
     .wave { inset: -40px -20px 0; -webkit-mask-image: radial-gradient(65% 30% at 100% 88%, #000 10%, transparent 75%), linear-gradient(to bottom, #000 70%, transparent 100%); -webkit-mask-composite: source-in; mask-image: radial-gradient(65% 30% at 100% 88%, #000 10%, transparent 75%), linear-gradient(to bottom, #000 70%, transparent 100%); mask-composite: intersect; }
-    .focus { margin-top: 30px; }
+    .focus { margin-top: 30px; flex-direction: column; row-gap: 2px; }
+    .focus em { display: none; }
     .about p.lead { font-size: 1.3rem; }
     section.block { grid-template-columns: minmax(0, 1fr); gap: 20px; padding: 56px 0; }
     section.block > .label { position: static; padding-top: 0; }

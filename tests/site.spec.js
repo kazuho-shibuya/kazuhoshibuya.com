@@ -52,6 +52,14 @@ test("desktop: the focus line sits on one line", async ({ page }) => {
   expect(new Set(tops).size).toBe(1);
 });
 
+test("phone: the focus line is three short lines with no dots", async ({ page }) => {
+  await open(page, PHONE);
+  const spans = page.locator(".focus span");
+  const tops = await spans.evaluateAll((all) => all.map((s) => Math.round(s.getBoundingClientRect().top)));
+  expect(new Set(tops).size).toBe(3);
+  await expect(page.locator(".focus em").first()).toBeHidden();
+});
+
 test("every font file loads", async ({ page }) => {
   await open(page, DESKTOP);
   const loaded = await page.evaluate(() => [...document.fonts].filter((f) => f.status === "loaded").map((f) => f.family.replaceAll('"', "")));
