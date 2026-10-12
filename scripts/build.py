@@ -124,12 +124,16 @@ def experience_html(roles):
                 out.append(f"      {zone}")
             current_city = r["city"]
         items = "\n".join(f"              <li>{html.escape(b)}</li>" for b in r["bullets"])
+        dates = html.escape(r["dates"])
+        title = html.escape(r["title"])
+        company = html.escape(r["company"])
+        summary = html.escape(r["summary"])
         out.append(
             f'      <li class="role {r["city"]}">\n'
-            f'        <p class="when">{html.escape(r["dates"])}</p>\n'
+            f'        <p class="when">{dates}</p>\n'
             f"        <div>\n"
-            f"          <h3>{html.escape(r['title'])} <span>{html.escape(r['company'])}</span></h3>\n"
-            f'          <p class="summary">{html.escape(r["summary"])}</p>\n'
+            f"          <h3>{title} <span>{company}</span></h3>\n"
+            f'          <p class="summary">{summary}</p>\n'
             f"          <details>\n"
             f"            <summary>Highlights</summary>\n"
             f"            <ul>\n{items}\n            </ul>\n"
@@ -142,7 +146,12 @@ def experience_html(roles):
 
 
 def stack_html(stack):
-    return "\n".join(f"      <div><dt>{html.escape(label)}</dt><dd>{html.escape(value)}</dd></div>" for label, value in stack)
+    rows = []
+    for label, value in stack:
+        term = html.escape(label)
+        description = html.escape(value)
+        rows.append(f"      <div><dt>{term}</dt><dd>{description}</dd></div>")
+    return "\n".join(rows)
 
 
 def bullet(roles, prefix):
@@ -190,7 +199,7 @@ def headers_file(page):
     """Cloudflare's _headers file: a strict policy that allows only this page's own inline code."""
     # A src script is not inline, and structured data never runs, so neither needs a hash.
     with_attributes = re.findall(
-        r'<style\s[^>]*>|<script\s(?!type="application/ld\+json">)(?![^>]*\bsrc=)[^>]*>', page, flags=re.IGNORECASE
+        r'<style\s[^>]*>|<script\s(?!type="application/ld\+json">)(?!(?:[^>]*\s)?src=)[^>]*>', page, flags=re.IGNORECASE
     )
     if with_attributes:
         raise BuildError(f"inline script and style tags must have no attributes, or the policy gets no hash for them: {with_attributes}")

@@ -141,6 +141,7 @@ class HeadersTest(unittest.TestCase):
             '<style media="print">a{}</style>',
             '<style src="x">a{}</style>',
             '<SCRIPT type="module">x()</SCRIPT>',
+            '<script data-src="x">y()</script>',
         ]:
             with self.subTest(page=page), self.assertRaisesRegex(build.BuildError, "attributes"):
                 build.headers_file(page)
