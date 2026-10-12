@@ -161,7 +161,10 @@ def include_files(template, folder=SRC):
         path = folder / match.group(1)
         if not path.exists():
             raise BuildError(f"the template includes {match.group(1)}, which is not in {folder.name}/")
-        return path.read_text().rstrip("\n")
+        contents = path.read_text().rstrip("\n")
+        if "{{" in contents:
+            raise BuildError(f"{match.group(1)} contains a placeholder; only the template may have them")
+        return contents
 
     return re.sub(r"\{\{include: (.+?)\}\}", contents, template)
 
@@ -189,11 +192,11 @@ def csp_hash(code):
 
 def headers_file(page):
     """Cloudflare's _headers file: a strict policy that allows only this page's own inline code."""
-    with_attributes = re.findall(r"<(?:script|style)\s(?![^>]*\bsrc=)[^>]*>", page)
+    with_attributes = re.findall(r"<style\s[^>]*>|<script\s(?![^>]*\bsrc=)[^>]*>", page, flags=re.IGNORECASE)
     if with_attributes:
         raise BuildError(f"inline script and style tags must have no attributes, or the policy gets no hash for them: {with_attributes}")
-    scripts = [csp_hash(code) for code in re.findall(r"<script>(.*?)</script>", page, flags=re.DOTALL)]
-    styles = [csp_hash(code) for code in re.findall(r"<style>(.*?)</style>", page, flags=re.DOTALL)]
+    scripts = [csp_hash(code) for code in re.findall(r"<script>(.*?)</script>", page, flags=re.DOTALL | re.IGNORECASE)]
+    styles = [csp_hash(code) for code in re.findall(r"<style>(.*?)</style>", page, flags=re.DOTALL | re.IGNORECASE)]
     policy = "; ".join(
         [
             "default-src 'none'",
@@ -228,8 +231,9 @@ def main():
     try:
         data = parse(SOURCE.read_text())
         page = render(include_files(TEMPLATE.read_text()), data)
+        headers = headers_file(page)
         OUTPUT.write_text(page)
-        HEADERS.write_text(headers_file(page))
+        HEADERS.write_text(headers)
     except BuildError as error:
         print(f"build failed: {error}", file=sys.stderr)
         return 1

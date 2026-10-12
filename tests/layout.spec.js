@@ -4,10 +4,16 @@ const { DESKTOP, TABLET, PHONE, SMALL_PHONE, WIDTHS, open } = require("./helpers
 
 // Runs in the page: the text of each element that takes more than one row.
 function wrappedText(elements) {
+  // Text only: an icon taller than the line would hide a second line that starts beside it.
   const rowsOf = (el) => {
-    const range = document.createRange();
-    range.selectNodeContents(el);
-    const pieces = [...range.getClientRects()].filter((r) => r.width > 1 && r.height > 1).sort((a, b) => a.top - b.top);
+    const pieces = [];
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      const range = document.createRange();
+      range.selectNodeContents(node);
+      pieces.push(...[...range.getClientRects()].filter((r) => r.width > 1 && r.height > 1));
+    }
+    pieces.sort((a, b) => a.top - b.top);
     let rows = 0;
     let bottom = -Infinity;
     for (const piece of pieces) {
@@ -75,6 +81,29 @@ test("the tab icon and the header mark are the sail", async ({ page }) => {
   await expect(page.locator('link[rel="icon"]')).toHaveAttribute("href", /^data:image\/svg\+xml,.*s-jib/);
   await expect(page.locator(".hero .label .mark")).toBeVisible();
 });
+
+test("the one-line check sees a label that wraps beside the taller sail mark", async ({ page }) => {
+  await open(page, PHONE);
+  const label = page.locator(".hero .label");
+  await label.evaluate((el) => (el.style.width = "260px"));
+  expect(await label.evaluateAll(wrappedText)).toHaveLength(1);
+});
+
+for (const [name, viewport] of WIDTHS) {
+  test(`${name} (${viewport.width}px): after tapping Email, the contact row is still one line`, async ({ page, context, browserName }) => {
+    test.skip(browserName !== "chromium", "clipboard permissions can only be granted in Chromium");
+    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+    await open(page, viewport);
+    await page.locator(".links.contact a.email").click();
+    await expect(page.locator(".links.contact .copied")).toHaveText(/^Copied /);
+    const linkRows = await page
+      .locator(".links.contact a")
+      .evaluateAll((links) => new Set(links.map((a) => Math.round(a.getBoundingClientRect().top))).size);
+    expect(linkRows, "rows the three links take").toBe(1);
+    const right = await page.locator(".links.contact .copied").evaluate((el) => el.getBoundingClientRect().right);
+    expect(right).toBeLessThanOrEqual(viewport.width);
+  });
+}
 
 test("desktop: every row in How it's built sits on one line", async ({ page }) => {
   await open(page, DESKTOP);

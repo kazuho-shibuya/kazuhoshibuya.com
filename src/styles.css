@@ -945,4 +945,14 @@ footer.site a {
   footer.site .place {
     display: none;
   }
+  .links.contact {
+    position: relative;
+  }
+  .links.contact .copied {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    margin-left: 0;
+    white-space: nowrap;
+  }
 }

@@ -7,6 +7,11 @@ on:
 permissions:
   contents: read
 
+# A newer push cancels the older run for the same branch, so an older commit can never deploy last.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   check:
     runs-on: ubuntu-latest
@@ -24,9 +29,6 @@ jobs:
   deploy:
     needs: check
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    concurrency:
-      group: deploy
-      cancel-in-progress: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0

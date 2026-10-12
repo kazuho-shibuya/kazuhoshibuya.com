@@ -74,8 +74,8 @@ test("GitHub links open", async ({ page, request }) => {
   await open(page, DESKTOP);
   const hrefs = await page.locator('a[href^="https://github.com"]').evaluateAll((links) => [...new Set(links.map((a) => a.href))]);
   for (const href of hrefs) {
-    const res = await request.get(href);
-    expect(res.status(), href).toBe(200);
+    const status = async () => (await request.get(href)).status();
+    await expect.poll(status, { message: href, intervals: [2_000, 5_000], timeout: 15_000 }).toBe(200);
   }
 });
 

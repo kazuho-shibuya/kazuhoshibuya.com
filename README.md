@@ -69,12 +69,12 @@ npm run check                                              # everything, in the 
 npm run format                                             # Ruff and Prettier
 ```
 
-| Change                 | Edit                                  | Then                                                                                |
-| ---------------------- | ------------------------------------- | ----------------------------------------------------------------------------------- |
-| Words                  | the LinkedIn text in the private repo | `./deploy.sh`                                                                       |
-| Layout, styles, design | `src/template.html`, `src/styles.css` | `npm run build`; review the screenshots; `npm run screenshots:update` once approved |
-| Japanese text          | `src/template.html`                   | `scripts/subset-jp-font.sh`; a test fails if a character has no glyph               |
-| Build logic            | `scripts/build.py`                    | `npm run test:unit`                                                                 |
+| Change                 | Edit                                              | Then                                                                                |
+| ---------------------- | ------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Words                  | the LinkedIn text in the private repo             | `./deploy.sh`                                                                       |
+| Layout, styles, design | `src/template.html`, `src/styles.css`, `src/*.js` | `npm run build`; review the screenshots; `npm run screenshots:update` once approved |
+| Japanese text          | `src/template.html`                               | `scripts/subset-jp-font.sh`; a test fails if a character has no glyph               |
+| Build logic            | `scripts/build.py`                                | `npm run test:unit`                                                                 |
 
 Push to `main` to deploy: GitHub Actions runs every check, deploys with `wrangler` using the `CLOUDFLARE_API_TOKEN` repository secret, waits for the new version, then runs the browser suite against the live site. Dependabot proposes dependency updates weekly.
 

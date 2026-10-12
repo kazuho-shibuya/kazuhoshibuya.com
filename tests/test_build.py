@@ -1,5 +1,6 @@
 """Unit tests for scripts/build.py, run with: python3 -m unittest discover tests"""
 
+import re
 import sys
 import unittest
 from pathlib import Path
@@ -10,6 +11,13 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import build
 
 FIXTURE = (ROOT / "tests/fixtures/linkedin.md").read_text()
+
+
+def matches_template(page, template):
+    """True when the page is the template with only its placeholders filled in."""
+    fixed_parts = re.split(r"\{\{.*?\}\}", template)
+    pattern = ".*?".join(re.escape(part) for part in fixed_parts)
+    return re.fullmatch(pattern, page, flags=re.DOTALL) is not None
 
 
 class ParseTest(unittest.TestCase):
@@ -110,10 +118,16 @@ class HeadersTest(unittest.TestCase):
         for code in ["a{}", "one()", "two()"]:
             self.assertIn(build.csp_hash(code), csp)
         self.assertEqual(csp.count("'sha256-"), 3)
+        self.assertIn(build.csp_hash("three()"), build.headers_file("<SCRIPT>three()</SCRIPT>"))
         self.assertNotIn("unsafe-inline", csp)
 
     def test_an_inline_script_or_style_with_attributes_is_an_error(self):
-        for page in ['<script type="module">x()</script>', '<style media="print">a{}</style>']:
+        for page in [
+            '<script type="module">x()</script>',
+            '<style media="print">a{}</style>',
+            '<style src="x">a{}</style>',
+            '<SCRIPT type="module">x()</SCRIPT>',
+        ]:
             with self.subTest(page=page), self.assertRaisesRegex(build.BuildError, "attributes"):
                 build.headers_file(page)
 
@@ -124,23 +138,31 @@ class IncludeTest(unittest.TestCase):
         self.assertIn((ROOT / "src/styles.css").read_text().rstrip("\n"), page)
         self.assertNotIn("{{include", page)
 
+    def test_a_placeholder_inside_an_included_file_is_an_error(self):
+        folder = Path(self.id().replace(".", "_"))
+        folder.mkdir(exist_ok=True)
+        self.addCleanup(lambda: (folder / "x.js").unlink() or folder.rmdir())
+        (folder / "x.js").write_text("// {{role}}\n")
+        with self.assertRaisesRegex(build.BuildError, "placeholder"):
+            build.include_files("{{include: x.js}}", folder)
+
     def test_an_include_of_a_missing_file_is_an_error(self):
         with self.assertRaisesRegex(build.BuildError, "missing.css"):
             build.include_files("{{include: missing.css}}")
 
 
 class CommittedPageTest(unittest.TestCase):
-    def test_every_fixed_line_of_every_source_file_reaches_the_committed_page_in_order(self):
+    def test_the_committed_page_matches_the_current_source_everywhere_but_the_placeholders(self):
         """CI cannot rebuild without the private source, so this catches a source edit that was never built."""
+        template = build.include_files((ROOT / "src/template.html").read_text())
         page = (ROOT / "public/index.html").read_text()
-        for source in ["template.html", "styles.css", "theme.js", "page.js"]:
-            position = 0
-            for line in (ROOT / "src" / source).read_text().splitlines():
-                if not line.strip() or "{{" in line:
-                    continue
-                found = page.find(line, position)
-                self.assertNotEqual(found, -1, f"run npm run build; public/index.html lacks this line of {source}: {line.strip()[:80]}")
-                position = found + len(line)
+        self.assertTrue(matches_template(page, template), "public/index.html is stale; run npm run build")
+
+    def test_a_deleted_line_or_a_changed_placeholder_line_is_caught(self):
+        template = "<p>{{role}}</p>\n<i>fixed</i>\n"
+        self.assertTrue(matches_template("<p>Engineer</p>\n<i>fixed</i>\n", template))
+        self.assertFalse(matches_template("<p>Engineer</p>\n", template))
+        self.assertFalse(matches_template('<p class="x">Engineer</p>\n<i>fixed</i>\n', template))
 
 
 if __name__ == "__main__":
