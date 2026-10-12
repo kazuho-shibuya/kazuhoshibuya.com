@@ -182,24 +182,30 @@
   dl.stack dd { margin: 0; }
 
   /* ---------- How this page is built ---------- */
-  .colophon .intro { margin: 0; max-width: 62ch; color: var(--soft); }
-  .colophon .links { margin-top: 16px; }
-  .pipeline { display: flex; flex-wrap: wrap; row-gap: 4px; margin: 16px 0 0; max-width: 62ch; font: 400 var(--fs-small)/1.6 var(--mono); color: var(--ink); }
-  .pipeline span { white-space: nowrap; }
-  .pipeline b { font-weight: 400; color: var(--accent); margin: 0 0.6em; }
-  .colophon .intro.note { margin: 20px 0 0; }
-  .colophon .motifs + .intro.note { margin-top: 28px; }
-  .motifs { margin: 40px 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; max-width: 62ch; }
-  .motifs li { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 16px; align-items: center; color: var(--soft); font-size: var(--fs-small); }
-  .motifs svg { width: 56px; height: 56px; }
-  .m-sail { padding: 6px; }
-  .m-wave { width: 56px; height: 56px; border-radius: 4px; background: var(--wave) 0 0 / 28px 14px repeat; opacity: .9; }
+  dl.decisions { display: grid; gap: 14px; margin: 0; }
+  dl.decisions div { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 16px; align-items: baseline; }
+  dl.decisions dt { font: 500 var(--fs-label)/1.3 var(--mono); color: var(--faint); }
+  dl.decisions dd { margin: 0; color: var(--ink); }
+  .motifs { margin: 36px 0 0; padding: 32px 0 0; border-top: 1px solid var(--rule); list-style: none; display: grid; gap: 14px; }
+  .motifs li { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 16px; align-items: center; }
+  .motifs p { margin: 0; color: var(--soft); font-size: var(--fs-small); }
+  .motifs b { color: var(--ink); font-weight: 500; margin-right: 0.4em; }
+  .motifs svg, .m-wave, .m-colours { width: 40px; height: 32px; }
+  .m-wave { border-radius: 4px; background: var(--wave) 0 0 / 20px 10px repeat; }
   .m-route path { fill: none; stroke-width: 3; stroke-linejoin: round; }
   .m-route .m-tyo { stroke: var(--sakura-deep); }
   .m-route .m-ldn { stroke: var(--rose); }
   .m-route circle { fill: var(--paper); stroke: var(--ink); stroke-width: 2; }
   .m-route .m-now { fill: var(--rose); stroke: var(--rose); }
-  .motifs b { display: block; color: var(--ink); font-weight: 500; font-size: var(--fs-body); margin-bottom: 2px; }
+  .m-colours { display: flex; gap: 6px; align-items: center; }
+  .m-colours i { width: 16px; height: 16px; border-radius: 50%; background: #1f3a64; box-shadow: 0 0 0 1px var(--rule); }
+  .m-colours i + i { background: #c2432b; }
+
+  footer.site { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; padding: 32px 0 48px; border-top: 1px solid var(--rule);
+    font: 400 var(--fs-small)/1.4 var(--mono); color: var(--faint); }
+  footer.site .who { display: flex; align-items: center; gap: 12px; }
+  footer.site .mark { width: 22px; height: 22px; }
+  footer.site a { margin-left: auto; color: var(--soft); }
 
   /* ---------- Contact row ---------- */
   .links.contact { align-items: center; }
@@ -261,7 +267,10 @@
     .role { grid-template-columns: minmax(0, 1fr); gap: 4px; padding-left: 36px; }
     .zone { padding-left: 36px; }
     .role .when { padding-top: 0; }
-    dl.stack, .motifs { grid-template-columns: minmax(0, 1fr); }
+    dl.stack { grid-template-columns: minmax(0, 1fr); }
+    dl.decisions div, .motifs li { grid-template-columns: 64px minmax(0, 1fr); gap: 12px; }
+    footer.site { flex-direction: column; align-items: flex-start; }
+    footer.site a { margin-left: 0; }
   }
 </style>
 </head>
@@ -333,18 +342,26 @@
 <section class="block colophon" aria-labelledby="built">
   <h2 class="label" id="built">How it's built</h2>
   <div>
-    <p class="intro">Built with Claude Code from plans I wrote and reviewed. The text is generated from my LinkedIn profile, and a change goes live only after browser and accessibility tests pass.</p>
-    <p class="pipeline"><span>LinkedIn text<b aria-hidden="true">→</b></span><span>Python build<b aria-hidden="true">→</b></span><span>Playwright and accessibility tests<b aria-hidden="true">→</b></span><span>GitHub Actions<b aria-hidden="true">→</b></span><span>Cloudflare Workers</span></p>
-    <ul class="links"><li><a href="https://github.com/kazuho-shibuya/kazuhoshibuya.com">Source on GitHub</a></li></ul>
+    <dl class="decisions">
+      <div><dt>Source</dt><dd>Generated from the same file as my LinkedIn profile, so the two never disagree.</dd></div>
+      <div><dt>Quality</dt><dd>Nothing deploys until browser and accessibility tests pass in Chrome and Safari.</dd></div>
+      <div><dt>Stack</dt><dd>Static HTML · Python · Playwright · GitHub Actions · Cloudflare</dd></div>
+      <div><dt>Method</dt><dd>Built with Claude Code from plans I wrote and reviewed.</dd></div>
+    </dl>
     <ul class="motifs">
-      <li><svg class="m-sail" aria-hidden="true"><use href="#sail"/></svg><div><b>帆, the sail</b>From my name, 一帆, which means one sail.</div></li>
-      <li><div class="m-wave" aria-hidden="true"></div><div><b>青海波, the waves</b>A Japanese pattern, drawn by the page.</div></li>
-      <li><svg viewBox="0 0 80 40" class="m-route"><path d="M8 32 H30 L46 16 H72" class="m-tyo"/><path d="M46 16 H72" class="m-ldn"/><circle cx="12" cy="32" r="4"/><circle cx="26" cy="32" r="4"/><circle cx="52" cy="16" r="4"/><circle cx="68" cy="16" r="4" class="m-now"/></svg><div><b>The route</b>My experience as a line from Tokyo to London.</div></li>
+      <li><svg class="m-sail" aria-hidden="true"><use href="#sail"/></svg><p><b>帆, the sail</b> From my name, 一帆, “one sail”.</p></li>
+      <li><div class="m-wave" aria-hidden="true"></div><p><b>青海波, the waves</b> A Japanese pattern, drawn by the page.</p></li>
+      <li><svg viewBox="0 0 80 40" class="m-route"><path d="M8 32 H30 L46 16 H72" class="m-tyo"/><path d="M46 16 H72" class="m-ldn"/><circle cx="12" cy="32" r="4"/><circle cx="26" cy="32" r="4"/><circle cx="52" cy="16" r="4"/><circle cx="68" cy="16" r="4" class="m-now"/></svg><p><b>The route</b> My experience as a line from Tokyo to London.</p></li>
+      <li><div class="m-colours" aria-hidden="true"><i></i><i></i></div><p><b>藍 and 朱, the colours</b> Indigo, named “Japan Blue” by a British chemist, and vermilion.</p></li>
     </ul>
-    <p class="intro note">The colours are 藍 indigo, which a British chemist named "Japan Blue", and 朱 vermilion.</p>
   </div>
 </section>
 
+
+  <footer class="site">
+    <span class="who"><svg class="mark" aria-hidden="true"><use href="#sail"/></svg>Kazuho Shibuya · London</span>
+    <a href="https://github.com/kazuho-shibuya/kazuhoshibuya.com">Source on GitHub</a>
+  </footer>
 
 </main>
 <script>

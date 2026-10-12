@@ -74,22 +74,27 @@ test("the tab icon and the header mark are the sail", async ({ page }) => {
   await expect(page.locator(".hero .label .mark")).toBeVisible();
 });
 
-for (const [name, viewport] of [["desktop", DESKTOP], ["phone", PHONE]]) {
-  test(`${name}: the build flow shows four arrows and no step breaks mid-way`, async ({ page }) => {
-    await open(page, viewport);
-    const arrows = page.locator(".pipeline b");
-    await expect(arrows).toHaveCount(4);
-    for (const arrow of await arrows.all()) await expect(arrow).toHaveText("→");
-    const steps = await page.locator(".pipeline span").evaluateAll((all) =>
-      all.map((s) => {
-        const range = document.createRange();
-        range.selectNodeContents(s.firstChild);
-        return range.getClientRects().length;
-      }),
-    );
-    expect(steps.every((lines) => lines === 1), `lines per step: ${steps}`).toBe(true);
-  });
-}
+test("desktop: every row in How it's built sits on one line", async ({ page }) => {
+  await open(page, DESKTOP);
+  const rows = await page.locator(".decisions dd, .motifs p").evaluateAll((all) =>
+    all.map((el) => {
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      const tops = new Set([...range.getClientRects()].map((r) => Math.round(r.top)));
+      return { text: el.textContent.trim().slice(0, 40), lines: tops.size };
+    }),
+  );
+  expect(rows.length).toBe(8);
+  expect(rows.filter((r) => r.lines !== 1)).toEqual([]);
+});
+
+test("the footer carries the mark, the name and the source link", async ({ page }) => {
+  await open(page, DESKTOP);
+  const footer = page.locator("footer.site");
+  await expect(footer.locator(".mark")).toBeVisible();
+  await expect(footer).toContainText("Kazuho Shibuya · London");
+  await expect(footer.locator("a")).toHaveAttribute("href", "https://github.com/kazuho-shibuya/kazuhoshibuya.com");
+});
 
 test("every font file loads", async ({ page }) => {
   await open(page, DESKTOP);
