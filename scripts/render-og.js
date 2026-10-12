@@ -6,7 +6,7 @@ const ROOT = path.join(__dirname, "..");
 const OUTPUT = path.join(ROOT, "public/og.png");
 const SIZE = { width: 1200, height: 630 };
 const FONTS = ["Source Serif 4", "Source Sans 3", "Source Code Pro", "Noto Serif JP"];
-// Hide what an image cannot use, and draw the header 1.45x so LinkedIn's 480px copy stays legible.
+// Hide what an image cannot use; 1.45x fills the width with even margins, so LinkedIn's 480px copy stays legible.
 const PREVIEW_STYLE = [
   ".theme, .links.contact, .facts, main, footer.site { display: none !important; }",
   ".hero > *:not(.wave) { zoom: 1.45; }",

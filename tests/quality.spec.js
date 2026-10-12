@@ -89,10 +89,15 @@ function textWidth(element) {
   return range.getBoundingClientRect().width;
 }
 
-test("in the link preview, the name spans most of the image so it stays readable at LinkedIn's 480px copy", async ({ page }) => {
+test("in the link preview, the name spans most of the image so it stays readable at LinkedIn's 480px copy", async ({
+  page,
+  browserName,
+}) => {
+  test.skip(browserName !== "chromium", "public/og.png is rendered in Chrome only");
   await open(page, SIZE);
   await showPreview(page);
   const nameWidth = await page.locator(".hero h1").evaluate(textWidth);
+  // The name spans about 0.49 of the image unscaled, so 0.7 fails if the 1.45x scale is lost.
   expect(nameWidth / SIZE.width).toBeGreaterThan(0.7);
 });
 
