@@ -37,6 +37,7 @@ test("the header and footer sit outside main, so screen readers find them as lan
 test("search engines get one address, a sitemap, link previews and the profile links", async ({ page, request }) => {
   await open(page, DESKTOP);
   const home = "https://kazuhoshibuya.com/";
+  await expect(page).toHaveTitle("Kazuho Shibuya (澁谷 一帆) — Software Engineer");
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", home);
   await expect(page.locator('meta[property="og:url"]')).toHaveAttribute("content", home);
   await expect(page.locator('meta[property="og:title"]')).toHaveAttribute("content", await page.title());
@@ -46,14 +47,15 @@ test("search engines get one address, a sitemap, link previews and the profile l
   expect(person["@type"]).toBe("Person");
   expect(person.name).toBe("Kazuho Shibuya");
   expect(person.alternateName).toEqual(["澁谷 一帆", "渋谷 一帆", "しぶや かずほ", "シブヤ カズホ"]);
-  expect(await page.title()).toBe("Kazuho Shibuya (澁谷 一帆) — Software Engineer");
   expect(person.url).toBe(home);
   const contactLinks = await page.locator('.links.contact a[href^="https://"]').evaluateAll((links) => links.map((a) => a.href));
   expect(person.sameAs).toEqual(contactLinks);
 
-  expect((await request.get("/robots.txt")).ok()).toBe(true);
-  expect(await (await request.get("/robots.txt")).text()).toContain(`Sitemap: ${home}sitemap.xml`);
-  expect(await (await request.get("/sitemap.xml")).text()).toContain(`<loc>${home}</loc>`);
+  const robots = await request.get("/robots.txt");
+  expect(robots.ok()).toBe(true);
+  expect(await robots.text()).toContain(`Sitemap: ${home}sitemap.xml`);
+  const sitemap = await request.get("/sitemap.xml");
+  expect(await sitemap.text()).toContain(`<loc>${home}</loc>`);
 });
 
 const PUBLIC = path.join(__dirname, "../public");
