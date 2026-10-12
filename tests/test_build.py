@@ -74,5 +74,16 @@ class RenderTest(unittest.TestCase):
             build.render("{{headline}} {{typo}}", self.data)
 
 
+class HeadersTest(unittest.TestCase):
+    def test_every_inline_script_and_style_is_allowed_by_its_hash_and_nothing_else_inline(self):
+        page = "<style>a{}</style><script>one()</script><script>two()</script><script src='x.js'></script>"
+        headers = build.headers_file(page)
+        csp = next(line for line in headers.splitlines() if "Content-Security-Policy" in line)
+        for code in ["a{}", "one()", "two()"]:
+            self.assertIn(build.csp_hash(code), csp)
+        self.assertEqual(csp.count("'sha256-"), 3)
+        self.assertNotIn("unsafe-inline", csp)
+
+
 if __name__ == "__main__":
     unittest.main()

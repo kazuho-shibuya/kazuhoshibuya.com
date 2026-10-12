@@ -1,5 +1,7 @@
 """Build public/index.html from src/template.html and the LinkedIn text in life-tracker."""
 
+import base64
+import hashlib
 import html
 import os
 import re
@@ -9,6 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 TEMPLATE = ROOT / "src/template.html"
 OUTPUT = ROOT / "public/index.html"
+HEADERS = ROOT / "public/_headers"
 SOURCE = ROOT.parent / "life-tracker/projects/career/artefacts/linkedin.md"
 LONDON_COMPANIES = {"Ophelos"}
 
@@ -164,6 +167,38 @@ def render(template, data):
     return page
 
 
+def csp_hash(code):
+    return "'sha256-" + base64.b64encode(hashlib.sha256(code.encode()).digest()).decode() + "'"
+
+
+def headers_file(page):
+    """Cloudflare's _headers file: a strict policy that allows only this page's own inline code."""
+    scripts = [csp_hash(code) for code in re.findall(r"<script>(.*?)</script>", page, flags=re.DOTALL)]
+    styles = [csp_hash(code) for code in re.findall(r"<style>(.*?)</style>", page, flags=re.DOTALL)]
+    policy = "; ".join(
+        [
+            "default-src 'none'",
+            "script-src " + " ".join(scripts + ["https://static.cloudflareinsights.com"]),
+            "style-src " + " ".join(styles),
+            "font-src 'self'",
+            "img-src 'self' data:",
+            "connect-src 'self' https://cloudflareinsights.com",
+            "base-uri 'none'",
+            "form-action 'none'",
+            "frame-ancestors 'none'",
+        ]
+    )
+    rules = [
+        ("Content-Security-Policy", policy),
+        ("Strict-Transport-Security", "max-age=31536000; includeSubDomains"),
+        ("X-Content-Type-Options", "nosniff"),
+        ("Referrer-Policy", "strict-origin-when-cross-origin"),
+        ("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=(), usb=()"),
+        ("Cross-Origin-Opener-Policy", "same-origin"),
+    ]
+    return "/*\n" + "".join(f"  {name}: {value}\n" for name, value in rules)
+
+
 def main():
     if not SOURCE.exists():
         if os.environ.get("CI"):
@@ -175,7 +210,9 @@ def main():
         return 1
     try:
         data = parse(SOURCE.read_text())
-        OUTPUT.write_text(render(TEMPLATE.read_text(), data))
+        page = render(TEMPLATE.read_text(), data)
+        OUTPUT.write_text(page)
+        HEADERS.write_text(headers_file(page))
     except BuildError as error:
         print(f"build failed: {error}", file=sys.stderr)
         return 1

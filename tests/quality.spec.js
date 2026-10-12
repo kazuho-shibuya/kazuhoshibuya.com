@@ -1,5 +1,8 @@
 const { test, expect } = require("@playwright/test");
 const AxeBuilder = require("@axe-core/playwright").default;
+const crypto = require("crypto");
+const fs = require("fs");
+const path = require("path");
 const { DESKTOP, open } = require("./helpers");
 
 test("the only scripts are the theme choice, the page script and Cloudflare's visitor count", async ({ page }) => {
@@ -22,3 +25,59 @@ for (const scheme of ["light", "dark"]) {
     expect(summary).toEqual([]);
   });
 }
+
+const PUBLIC = path.join(__dirname, "../public");
+
+// Reads public/_headers into { name: value } for the "/*" block.
+function productionHeaders() {
+  const lines = fs.readFileSync(path.join(PUBLIC, "_headers"), "utf8").split("\n");
+  const headers = {};
+  for (const line of lines.slice(lines.indexOf("/*") + 1)) {
+    const match = line.match(/^\s+([A-Za-z-]+):\s*(.+)$/);
+    if (match) headers[match[1].toLowerCase()] = match[2].trim();
+  }
+  return headers;
+}
+
+const inlineHashes = (html, tag) =>
+  [...html.matchAll(new RegExp(`<${tag}>([\\s\\S]*?)</${tag}>`, "g"))].map((m) => `'sha256-${crypto.createHash("sha256").update(m[1]).digest("base64")}'`);
+
+test("the headers file sets the security headers and allows exactly the page's inline code", async () => {
+  const headers = productionHeaders();
+  const html = fs.readFileSync(path.join(PUBLIC, "index.html"), "utf8");
+  const csp = headers["content-security-policy"];
+  expect(csp, "Content-Security-Policy").toBeTruthy();
+  for (const hash of inlineHashes(html, "script")) expect(csp).toContain(hash);
+  for (const hash of inlineHashes(html, "style")) expect(csp).toContain(hash);
+  expect(csp).toContain("default-src 'none'");
+  expect(csp).toContain("frame-ancestors 'none'");
+  expect(csp).not.toContain("unsafe-inline");
+  expect(headers["strict-transport-security"]).toMatch(/max-age=\d{8,}/);
+  expect(headers["x-content-type-options"]).toBe("nosniff");
+  expect(headers["referrer-policy"]).toBe("strict-origin-when-cross-origin");
+  expect(headers["permissions-policy"]).toContain("camera=()");
+});
+
+test("the page runs under the production headers with no policy violations", async ({ page, context, browserName }) => {
+  test.skip(!!process.env.LIVE, "the live run checks the real headers instead");
+  const headers = productionHeaders();
+  await page.route("/", async (route) => {
+    const response = await route.fetch();
+    await route.fulfill({ response, headers: { ...response.headers(), ...headers } });
+  });
+  await page.addInitScript(() => {
+    window.__violations = [];
+    document.addEventListener("securitypolicyviolation", (e) => window.__violations.push(`${e.violatedDirective}: ${e.blockedURI || "inline"}`));
+  });
+  if (browserName === "chromium") await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  await open(page, DESKTOP);
+  await page.locator("button.theme").click();
+  await page.locator(".links.contact a.email").click();
+  expect(await page.evaluate(() => window.__violations)).toEqual([]);
+});
+
+test("the live site serves the headers from the headers file", async ({ request }) => {
+  test.skip(!process.env.LIVE, "only meaningful against the deployed site");
+  const live = (await request.get("/")).headers();
+  for (const [name, value] of Object.entries(productionHeaders())) expect(live[name], name).toBe(value);
+});
