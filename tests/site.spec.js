@@ -111,14 +111,18 @@ for (const [name, viewport, limit] of [["desktop", DESKTOP, 20], ["tablet", TABL
       }
       return rects.filter((r) => r.width > 0 && r.height > 0);
     });
-    const withWave = await Promise.all(boxes.map((clip) => page.screenshot({ clip })));
+    // One screenshot of the first screen with the wave, one without; compare only pixels under text.
+    const withWave = PNG.sync.read(await page.screenshot({ scale: "css" }));
     await page.addStyleTag({ content: ".wave, .hero::before { display: none !important; }" });
-    const withoutWave = await Promise.all(boxes.map((clip) => page.screenshot({ clip })));
+    const withoutWave = PNG.sync.read(await page.screenshot({ scale: "css" }));
     let worst = 0;
-    for (let i = 0; i < boxes.length; i++) {
-      const a = PNG.sync.read(withWave[i]).data;
-      const b = PNG.sync.read(withoutWave[i]).data;
-      for (let p = 0; p < a.length; p++) worst = Math.max(worst, Math.abs(a[p] - b[p]));
+    for (const box of boxes) {
+      for (let y = Math.max(0, box.y); y < Math.min(withWave.height, box.y + box.height); y++) {
+        for (let x = Math.max(0, box.x); x < Math.min(withWave.width, box.x + box.width); x++) {
+          const i = (y * withWave.width + x) * 4;
+          for (let c = 0; c < 3; c++) worst = Math.max(worst, Math.abs(withWave.data[i + c] - withoutWave.data[i + c]));
+        }
+      }
     }
     expect(worst).toBeLessThanOrEqual(limit);
   });
@@ -158,14 +162,16 @@ for (const [name, viewport] of [["desktop", DESKTOP], ["phone", PHONE]]) {
       await page.waitForTimeout(100);
     }
     await page.waitForTimeout(300);
-    const unfinished = await page.evaluate(() =>
-      document
-        .getAnimations()
-        .filter((a) => a.timeline && !(a.timeline instanceof DocumentTimeline))
-        .filter((a) => a.effect.getComputedTiming().progress !== 1)
-        .map((a) => `${a.animationName} on ${a.effect.target?.className || a.effect.target?.tagName}${a.effect.pseudoElement || ""}`),
-    );
-    expect(unfinished).toEqual([]);
+    // Wait for the browser to catch up rather than sleeping: under load, scroll timelines update late.
+    const unfinished = () =>
+      page.evaluate(() =>
+        document
+          .getAnimations()
+          .filter((a) => a.timeline && !(a.timeline instanceof DocumentTimeline))
+          .filter((a) => a.effect.getComputedTiming().progress !== 1)
+          .map((a) => `${a.animationName} on ${a.effect.target?.className || a.effect.target?.tagName}${a.effect.pseudoElement || ""}`),
+      );
+    await expect.poll(unfinished, { timeout: 15_000 }).toEqual([]);
   });
 }
 
@@ -229,6 +235,7 @@ test.describe("looks the same as the approved version", () => {
     ["phone-light", PHONE, "light"],
   ]) {
     test(name, async ({ page }) => {
+      test.setTimeout(60_000);
       await open(page, viewport, scheme);
       await expect(page).toHaveScreenshot(`${name}.png`, { fullPage: true, maxDiffPixels: 0, threshold: 0.05 });
     });

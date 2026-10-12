@@ -7,6 +7,8 @@ module.exports = defineConfig({
   testDir: "tests",
   timeout: 20_000,
   fullyParallel: true,
+  // This Mac is often busy; two at a time keeps the browsers from timing out. CI runs at full width.
+  workers: process.env.CI ? undefined : 2,
   reporter: "line",
   snapshotPathTemplate: "tests/screenshots/{arg}{ext}",
   expect: { toHaveScreenshot: { timeout: 20_000 } },
