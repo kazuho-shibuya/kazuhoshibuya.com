@@ -4,7 +4,8 @@
   "description": "Personal site of Kazuho Shibuya, served from Cloudflare.",
   "scripts": {
     "build": "python3 scripts/build.py",
-    "check": "python3 scripts/build.py && html-validate public/index.html && playwright test",
+    "test:unit": "python3 -m unittest discover tests",
+    "check": "npm run test:unit && python3 scripts/build.py && html-validate public/index.html && playwright test",
     "screenshots:update": "playwright test -g \"looks the same\" --project chrome --update-snapshots",
     "deploy": "./deploy.sh"
   },

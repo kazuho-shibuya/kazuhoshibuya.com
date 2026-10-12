@@ -12,6 +12,15 @@ OUTPUT = ROOT / "public/index.html"
 SOURCE = ROOT.parent / "life-tracker/projects/career/artefacts/linkedin.md"
 LONDON_COMPANIES = {"Ophelos"}
 
+ROLE_HEADING = re.compile(
+    r"^### ([^\n]+?), ([^\n]+) \(([^\n]+)\)\n(.*?)(?=^### |\Z)",
+    re.MULTILINE | re.DOTALL,
+)
+
+
+class BuildError(Exception):
+    """The source text or the template is not in the shape the build expects."""
+
 
 def esc(text):
     return html.escape(text, quote=False)
@@ -19,17 +28,19 @@ def esc(text):
 
 def section(md, heading):
     match = re.search(
-        rf"^## {re.escape(heading)}\n(.*?)(?=^## |\Z)", md, flags=re.MULTILINE | re.DOTALL
+        rf"^## {re.escape(heading)}\n(.*?)(?=^## |\Z)",
+        md,
+        flags=re.MULTILINE | re.DOTALL,
     )
     if not match:
-        sys.exit(f"linkedin.md has no '## {heading}' section")
+        raise BuildError(f"linkedin.md has no '## {heading}' section")
     return match.group(1)
 
 
 def first_block(text):
     match = re.search(r"```\n(.*?)\n```", text, flags=re.DOTALL)
     if not match:
-        sys.exit("expected a fenced block")
+        raise BuildError("expected a fenced block")
     return match.group(1)
 
 
@@ -37,75 +48,70 @@ def paragraphs(block):
     return [p.strip() for p in block.split("\n\n") if p.strip()]
 
 
-if not SOURCE.exists():
-    if os.environ.get("CI"):
-        print(f"skipped: {SOURCE.name} is private and not available in CI; checking the committed page")
-        sys.exit(0)
-    sys.exit(f"missing {SOURCE}")
+def parse(md, london_companies=LONDON_COMPANIES):
+    headline = first_block(section(md, "1. Headline")).strip()
+    role, skills, focus, years, city = [p.strip() for p in headline.split("|")]
 
-md = SOURCE.read_text()
+    about = paragraphs(first_block(section(md, "2. About")))
+    stack = [tuple(line.split(": ", 1)) for line in about[-1].splitlines()]
 
-headline = first_block(section(md, "1. Headline")).strip()
-parts = [p.strip() for p in headline.split("|")]
-role, skills, focus, years, city = parts
+    roles = []
+    for title, company, dates, body in ROLE_HEADING.findall(
+        section(md, "5. Experience")
+    ):
+        lines = first_block(body).splitlines()
+        roles.append(
+            {
+                "title": title,
+                "company": company,
+                "dates": dates,
+                "city": "ldn" if company in london_companies else "tyo",
+                "summary": lines[0].strip(),
+                "bullets": [line[1:].strip() for line in lines if line.startswith("•")],
+            }
+        )
 
-about = paragraphs(first_block(section(md, "2. About")))
-stack_lines = about[-1].splitlines()
-about = about[:-1]
-
-roles = []
-for match in re.finditer(
-    r"^### ([^\n]+?), ([^\n]+) \(([^\n]+)\)\n(.*?)(?=^### |\Z)",
-    section(md, "5. Experience"),
-    flags=re.MULTILINE | re.DOTALL,
-):
-    title, company, dates, body = match.groups()
-    block = first_block(body)
-    lines = block.splitlines()
-    summary = lines[0].strip()
-    bullets = [line[1:].strip() for line in lines if line.startswith("•")]
-    roles.append(
-        {
-            "title": title,
-            "company": company,
-            "dates": dates,
-            "summary": summary,
-            "bullets": bullets,
-        }
-    )
-
-all_bullets = [b for r in roles for b in r["bullets"]]
+    return {
+        "headline": headline,
+        "role": role,
+        "skills": skills,
+        "focus": [f.strip() for f in focus.split("·")],
+        "years": years,
+        "city": city,
+        "about": about[:-1],
+        "stack": stack,
+        "roles": roles,
+    }
 
 
-def focus_html():
-    items = [esc(f.strip()) for f in focus.split("·")]
+def focus_html(focus):
+    items = [esc(f) for f in focus]
     spans = [f"<span>{item}<em>·</em></span>" for item in items[:-1]] + [
         f"<span>{items[-1]}</span>"
     ]
     return "".join(spans)
 
 
-def about_html():
+def about_html(about):
     out = [f'      <p class="lead">{esc(about[0])}</p>']
     out += [f"      <p>{esc(p)}</p>" for p in about[1:]]
     return "\n".join(out)
 
 
-def experience_html():
+def experience_html(roles):
     out = ['<ol class="roles">']
     current_city = None
     for r in roles:
-        city_code = "ldn" if r["company"] in LONDON_COMPANIES else "tyo"
-        if city_code != current_city:
-            name = "London" if city_code == "ldn" else "Tokyo"
+        if r["city"] != current_city:
+            zone = f'<li class="zone {r["city"]}">{"London" if r["city"] == "ldn" else "Tokyo"}</li>'
             if current_city is None:
-                out[-1] += f'<li class="zone {city_code}">{name}</li>'
+                out[-1] += zone
             else:
-                out.append(f'      <li class="zone {city_code}">{name}</li>')
-            current_city = city_code
+                out.append(f"      {zone}")
+            current_city = r["city"]
         items = "\n".join(f"              <li>{esc(b)}</li>" for b in r["bullets"])
         out.append(
-            f'      <li class="role {city_code}">\n'
+            f'      <li class="role {r["city"]}">\n'
             f'        <p class="when">{esc(r["dates"])}</p>\n'
             f"        <div>\n"
             f"          <h3>{esc(r['title'])} <span>{esc(r['company'])}</span></h3>\n"
@@ -121,37 +127,63 @@ def experience_html():
     return "\n".join(out)
 
 
-def stack_html():
-    rows = []
-    for line in stack_lines:
-        label, _, value = line.partition(": ")
-        rows.append(f"      <div><dt>{esc(label)}</dt><dd>{esc(value)}</dd></div>")
-    return "\n".join(rows)
+def stack_html(stack):
+    return "\n".join(
+        f"      <div><dt>{esc(label)}</dt><dd>{esc(value)}</dd></div>"
+        for label, value in stack
+    )
 
 
-def bullet(prefix):
-    found = [b for b in all_bullets if b.startswith(prefix)]
+def bullet(roles, prefix):
+    found = [b for r in roles for b in r["bullets"] if b.startswith(prefix)]
     if len(found) != 1:
-        sys.exit(
+        raise BuildError(
             f"selected-work prefix {prefix!r} matched {len(found)} bullets in linkedin.md"
         )
     return esc(found[0])
 
 
-page = TEMPLATE.read_text()
-page = page.replace("{{headline}}", esc(headline))
-page = page.replace("{{role}}", esc(role)).replace("{{city}}", esc(city))
-page = page.replace("{{focus}}", focus_html())
-page = page.replace("{{skills}}", esc(skills)).replace("{{years}}", esc(years))
-page = page.replace("{{about}}", about_html())
-page = page.replace("{{experience}}", experience_html())
-page = page.replace("{{stack}}", stack_html())
-page = re.sub(r"\{\{bullet: (.+?)\}\}", lambda m: bullet(m.group(1)), page)
+def render(template, data):
+    page = template.replace("{{headline}}", esc(data["headline"]))
+    page = page.replace("{{role}}", esc(data["role"])).replace(
+        "{{city}}", esc(data["city"])
+    )
+    page = page.replace("{{focus}}", focus_html(data["focus"]))
+    page = page.replace("{{skills}}", esc(data["skills"])).replace(
+        "{{years}}", esc(data["years"])
+    )
+    page = page.replace("{{about}}", about_html(data["about"]))
+    page = page.replace("{{experience}}", experience_html(data["roles"]))
+    page = page.replace("{{stack}}", stack_html(data["stack"]))
+    page = re.sub(
+        r"\{\{bullet: (.+?)\}\}", lambda m: bullet(data["roles"], m.group(1)), page
+    )
+    leftover = re.findall(r"\{\{.*?\}\}", page)
+    if leftover:
+        raise BuildError(f"unfilled placeholders: {leftover}")
+    return page
 
-leftover = re.findall(r"\{\{.*?\}\}", page)
-if leftover:
-    sys.exit(f"unfilled placeholders: {leftover}")
-OUTPUT.write_text(page)
-print(
-    f"built {OUTPUT.relative_to(ROOT)} from linkedin.md: {len(roles)} roles, {len(about)} about paragraphs"
-)
+
+def main():
+    if not SOURCE.exists():
+        if os.environ.get("CI"):
+            print(
+                f"skipped: {SOURCE.name} is private and not available in CI; checking the committed page"
+            )
+            return 0
+        print(f"missing {SOURCE}", file=sys.stderr)
+        return 1
+    try:
+        data = parse(SOURCE.read_text())
+        OUTPUT.write_text(render(TEMPLATE.read_text(), data))
+    except BuildError as error:
+        print(f"build failed: {error}", file=sys.stderr)
+        return 1
+    print(
+        f"built {OUTPUT.relative_to(ROOT)} from linkedin.md: {len(data['roles'])} roles, {len(data['about'])} about paragraphs"
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
