@@ -60,6 +60,20 @@ test("phone: the focus line is three short lines with no dots", async ({ page })
   await expect(page.locator(".focus em").first()).toBeHidden();
 });
 
+for (const [name, viewport] of [["phone", PHONE], ["small phone", { width: 360, height: 780 }]]) {
+  test(`${name}: the top label with the sail stays on one line`, async ({ page }) => {
+    await open(page, viewport);
+    const lines = await page.locator(".hero .label").evaluate((el) => Math.round(el.getBoundingClientRect().height / parseFloat(getComputedStyle(el).lineHeight)));
+    expect(lines).toBe(1);
+  });
+}
+
+test("the tab icon and the header mark are the sail", async ({ page }) => {
+  await open(page, DESKTOP);
+  await expect(page.locator('link[rel="icon"]')).toHaveAttribute("href", /^data:image\/svg\+xml,.*s-jib/);
+  await expect(page.locator(".hero .label .mark")).toBeVisible();
+});
+
 test("every font file loads", async ({ page }) => {
   await open(page, DESKTOP);
   const loaded = await page.evaluate(() => [...document.fonts].filter((f) => f.status === "loaded").map((f) => f.family.replaceAll('"', "")));
