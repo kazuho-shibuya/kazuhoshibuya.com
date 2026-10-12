@@ -1,5 +1,6 @@
 const { test, expect } = require("@playwright/test");
 const AxeBuilder = require("@axe-core/playwright").default;
+const { PNG } = require("pngjs");
 const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
@@ -72,7 +73,6 @@ test("shared links show a 1200x630 preview image with alt text", async ({ page, 
 
   const image = await request.get("/og.png");
   expect(image.headers()["content-type"]).toBe("image/png");
-  const { PNG } = require("pngjs");
   const png = PNG.sync.read(await image.body());
   expect([png.width, png.height]).toEqual([1200, 630]);
 });
