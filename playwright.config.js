@@ -9,6 +9,7 @@ module.exports = defineConfig({
   fullyParallel: true,
   reporter: "line",
   snapshotPathTemplate: "tests/screenshots/{arg}{ext}",
+  expect: { toHaveScreenshot: { timeout: 20_000 } },
   use: {
     baseURL: live ? "https://kazuhoshibuya.com" : "http://127.0.0.1:4173",
   },

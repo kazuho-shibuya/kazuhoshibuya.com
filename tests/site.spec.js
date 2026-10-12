@@ -66,6 +66,14 @@ test("every mailto link goes to the one address", async ({ page }) => {
   }
 });
 
+test("the top Contact link jumps to the contact section", async ({ page }) => {
+  await open(page, DESKTOP);
+  const link = page.locator(".hero .links a", { hasText: "Contact" });
+  await expect(link).toHaveAttribute("href", "#contact");
+  await link.click();
+  await expect(page.locator("#contact .email")).toBeInViewport();
+});
+
 test("the contact section shows the full address", async ({ page }) => {
   await open(page, DESKTOP);
   await expect(page.locator("#contact .email")).toHaveText(EMAIL);
