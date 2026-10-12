@@ -82,15 +82,17 @@ test("shared links show a 1200x630 preview image with alt text", async ({ page, 
   expect(colours.size, "a blank image has one colour").toBeGreaterThan(10);
 });
 
+// Runs in the page: the width of an element's text, since a heading block is as wide as its container.
+function textWidth(element) {
+  const range = document.createRange();
+  range.selectNodeContents(element);
+  return range.getBoundingClientRect().width;
+}
+
 test("in the link preview, the name spans most of the image so it stays readable at LinkedIn's 480px copy", async ({ page }) => {
   await open(page, SIZE);
   await showPreview(page);
-  // The heading is a full-width block, so measure the text inside it.
-  const nameWidth = await page.locator(".hero h1").evaluate((h1) => {
-    const range = document.createRange();
-    range.selectNodeContents(h1);
-    return range.getBoundingClientRect().width;
-  });
+  const nameWidth = await page.locator(".hero h1").evaluate(textWidth);
   expect(nameWidth / SIZE.width).toBeGreaterThan(0.7);
 });
 
