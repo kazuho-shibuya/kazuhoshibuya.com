@@ -68,13 +68,17 @@ test("shared links show a 1200x630 preview image with alt text", async ({ page, 
   await expect(meta("og:image")).toHaveAttribute("content", "https://kazuhoshibuya.com/og.png");
   await expect(meta("og:image:width")).toHaveAttribute("content", "1200");
   await expect(meta("og:image:height")).toHaveAttribute("content", "630");
-  await expect(meta("og:image:alt")).toHaveAttribute("content", /Kazuho Shibuya/);
+  const [role, city] = (await page.locator(".hero .label").textContent()).split("·").map((part) => part.trim());
+  await expect(meta("og:image:alt")).toHaveAttribute("content", `Kazuho Shibuya, ${role}, ${city}`);
   await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute("content", "summary_large_image");
 
   const image = await request.get("/og.png");
   expect(image.headers()["content-type"]).toBe("image/png");
   const png = PNG.sync.read(await image.body());
   expect([png.width, png.height]).toEqual([1200, 630]);
+  const colours = new Set();
+  for (let i = 0; i < png.data.length; i += 4 * 97) colours.add(png.data.readUInt32BE(i));
+  expect(colours.size, "a blank image has one colour").toBeGreaterThan(10);
 });
 
 const PUBLIC = path.join(__dirname, "../public");
