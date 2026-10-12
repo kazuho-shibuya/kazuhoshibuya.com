@@ -1,5 +1,6 @@
 const { test, expect } = require("@playwright/test");
 const AxeBuilder = require("@axe-core/playwright").default;
+const { PNG } = require("pngjs");
 
 const DESKTOP = { width: 1440, height: 900 };
 const TABLET = { width: 820, height: 1180 };
@@ -66,29 +67,55 @@ test("every mailto link goes to the one address", async ({ page }) => {
   }
 });
 
-test("the top Contact link jumps to the contact section", async ({ page }) => {
+test("the contact row is LinkedIn, GitHub, then Email, and appears only once", async ({ page }) => {
   await open(page, DESKTOP);
-  const link = page.locator(".hero .links a", { hasText: "Contact" });
-  await expect(link).toHaveAttribute("href", "#contact");
-  await link.click();
-  await expect(page.locator("#contact .email")).toBeInViewport();
+  await expect(page.locator(".links.contact a")).toHaveText(["LinkedIn", "GitHub", "Email"]);
+  for (const href of ["https://www.linkedin.com/in/kazuho-shibuya", "https://github.com/kazuho-shibuya", `mailto:${EMAIL}`]) {
+    await expect(page.locator(`a[href="${href}"]`)).toHaveCount(1);
+  }
 });
 
-test("the contact section shows the full address", async ({ page }) => {
-  await open(page, DESKTOP);
-  await expect(page.locator("#contact .email")).toHaveText(EMAIL);
-});
-
-test("the copy button puts the address on the clipboard", async ({ page, context, browserName }) => {
+test("Email copies the address and says so", async ({ page, context, browserName }) => {
   test.skip(browserName !== "chromium", "clipboard permissions can only be granted in Chromium");
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
-  await open(page, DESKTOP);
-  const button = page.locator("#contact button.copy");
-  await expect(button).toBeVisible();
-  await button.click();
-  await expect(page.locator("#contact .copied")).toHaveText("Copied");
+  await open(page, PHONE);
+  await page.locator(".links.contact a.email").click();
+  await expect(page.locator(".links.contact .copied")).toHaveText(`Copied ${EMAIL}`);
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(EMAIL);
+  expect(page.url()).not.toContain("mailto:");
 });
+
+// Desktop allows the faint edge of the wave under text: at most 8% change in any channel (20 of 255).
+// Tablet and phone allow none: there the wave is a strip above the text.
+for (const [name, viewport, limit] of [["desktop", DESKTOP, 20], ["tablet", TABLET, 0], ["phone", PHONE, 0]]) {
+  test(`${name}: the wave pattern behind the top text stays within ${limit} of 255`, async ({ page }) => {
+    await open(page, viewport);
+    // The boxes of the letters themselves, not of the full-width blocks that hold them.
+    const boxes = await page.locator(".hero").evaluate((hero) => {
+      const walker = document.createTreeWalker(hero, NodeFilter.SHOW_TEXT);
+      const rects = [];
+      for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+        if (!node.textContent.trim()) continue;
+        const range = document.createRange();
+        range.selectNodeContents(node);
+        for (const r of range.getClientRects()) {
+          rects.push({ x: Math.floor(r.x), y: Math.floor(r.y), width: Math.ceil(r.width), height: Math.ceil(r.height) });
+        }
+      }
+      return rects.filter((r) => r.width > 0 && r.height > 0);
+    });
+    const withWave = await Promise.all(boxes.map((clip) => page.screenshot({ clip })));
+    await page.addStyleTag({ content: ".wave, .hero::before { display: none !important; }" });
+    const withoutWave = await Promise.all(boxes.map((clip) => page.screenshot({ clip })));
+    let worst = 0;
+    for (let i = 0; i < boxes.length; i++) {
+      const a = PNG.sync.read(withWave[i]).data;
+      const b = PNG.sync.read(withoutWave[i]).data;
+      for (let p = 0; p < a.length; p++) worst = Math.max(worst, Math.abs(a[p] - b[p]));
+    }
+    expect(worst).toBeLessThanOrEqual(limit);
+  });
+}
 
 test("external links point where they say", async ({ page }) => {
   await open(page, DESKTOP);
@@ -122,12 +149,12 @@ test("the route map has two London stations and three Tokyo stations", async ({ 
   await expect(page.locator(".role.tyo")).toHaveCount(3);
 });
 
-test("the only scripts are the copy button and Cloudflare's visitor count", async ({ page }) => {
+test("the only scripts are the Email copy script and Cloudflare's visitor count", async ({ page }) => {
   await open(page, DESKTOP);
   // Cloudflare injects its cookie-free Web Analytics beacon into some served pages; the page itself carries only the copy script.
   const all = await page.locator("script").evaluateAll((els) => els.map((s) => s.src || `inline: ${s.textContent.trim().slice(0, 60)}`));
   const ours = all.filter((s) => !s.startsWith("https://static.cloudflareinsights.com/beacon.min.js"));
-  expect(ours, `scripts on the page: ${JSON.stringify(all)}`).toEqual([expect.stringMatching(/^inline: for \(const button of document\.querySelectorAll\("button\.copy"/)]);
+  expect(ours, `scripts on the page: ${JSON.stringify(all)}`).toEqual([expect.stringMatching(/^inline: for \(const link of document\.querySelectorAll\("a\[data-copy\]"/)]);
 });
 
 for (const scheme of ["light", "dark"]) {
@@ -151,7 +178,7 @@ test.describe("looks the same as the approved version", () => {
   ]) {
     test(name, async ({ page }) => {
       await open(page, viewport, scheme);
-      await expect(page).toHaveScreenshot(`${name}.png`, { fullPage: true, maxDiffPixelRatio: 0.002 });
+      await expect(page).toHaveScreenshot(`${name}.png`, { fullPage: true, maxDiffPixels: 0, threshold: 0.05 });
     });
   }
 });
