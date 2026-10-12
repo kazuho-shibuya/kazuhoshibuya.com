@@ -1,6 +1,8 @@
 const { test, expect } = require("@playwright/test");
 const AxeBuilder = require("@axe-core/playwright").default;
 const { PNG } = require("pngjs");
+const fontkit = require("fontkit");
+const path = require("path");
 
 const DESKTOP = { width: 1440, height: 900 };
 const TABLET = { width: 820, height: 1180 };
@@ -94,6 +96,15 @@ test("the footer carries the mark, the name and the source link", async ({ page 
   await expect(footer.locator(".mark")).toBeVisible();
   await expect(footer).toContainText("Kazuho Shibuya · London");
   await expect(footer.locator("a")).toHaveAttribute("href", "https://github.com/kazuho-shibuya/kazuhoshibuya.com");
+});
+
+test("the Japanese name is 澁谷 一帆, and the shipped font file contains every character of it", async ({ page }) => {
+  await open(page, DESKTOP);
+  const text = await page.locator('[lang="ja"]').allTextContents();
+  expect(text[0]).toBe("澁谷 一帆");
+  const font = fontkit.openSync(path.join(__dirname, "../public/fonts/noto-serif-jp.woff2"));
+  const missing = [...new Set(text.join("").replace(/\s/g, ""))].filter((ch) => !font.hasGlyphForCodePoint(ch.codePointAt(0)));
+  expect(missing, "characters with no glyph in noto-serif-jp.woff2").toEqual([]);
 });
 
 test("every font file loads", async ({ page }) => {

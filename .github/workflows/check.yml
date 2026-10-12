@@ -14,7 +14,7 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps webkit
+      - run: npx playwright install --with-deps webkit firefox
       - run: npm run check
 
   deploy:
@@ -39,6 +39,6 @@ jobs:
           npx wrangler deploy --config wrangler.jsonc
       - name: Wait for the new version to be live
         run: scripts/wait-live.sh
-      - run: npx playwright install --with-deps webkit
+      - run: npx playwright install --with-deps webkit firefox
       - name: Check the live site
         run: LIVE=1 npx playwright test --grep-invert "looks the same"

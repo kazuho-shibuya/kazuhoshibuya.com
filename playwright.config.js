@@ -18,6 +18,7 @@ module.exports = defineConfig({
   projects: [
     { name: "chrome", use: { channel: "chrome" } },
     { name: "safari", use: { browserName: "webkit" } },
+    { name: "firefox", use: { browserName: "firefox" } },
   ],
   webServer: live
     ? undefined
