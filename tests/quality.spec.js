@@ -78,8 +78,15 @@ test("shared links show a 1200x630 preview image with alt text", async ({ page, 
   const [role, city] = (await page.locator(".hero .label").textContent()).split("·").map((part) => part.trim());
   await expect(meta("og:image:alt")).toHaveAttribute("content", `Kazuho Shibuya, ${role}, ${city}`);
   await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute("content", "summary_large_image");
+  await expect(page.locator('meta[name="author"]')).toHaveAttribute("content", "Kazuho Shibuya");
 
   const image = await request.get("/og.png");
+  const servedVersion = crypto
+    .createHash("sha256")
+    .update(await image.body())
+    .digest("hex")
+    .slice(0, 8);
+  expect(servedVersion, "the served image is the committed one").toBe(version);
   expect(image.headers()["content-type"]).toBe("image/png");
   const png = PNG.sync.read(await image.body());
   expect([png.width, png.height]).toEqual([1200, 630]);
