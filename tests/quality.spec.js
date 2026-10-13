@@ -66,14 +66,27 @@ test("search engines get one address, a sitemap, link previews and the profile l
 test("shared links show a 1200x630 preview image with alt text", async ({ page, request }) => {
   await open(page, DESKTOP);
   const meta = (property) => page.locator(`meta[property="${property}"]`);
-  await expect(meta("og:image")).toHaveAttribute("content", "https://kazuhoshibuya.com/og.png");
+  // The address carries the image's fingerprint, so LinkedIn and others fetch a changed image instead of reusing their copy.
+  const version = crypto
+    .createHash("sha256")
+    .update(fs.readFileSync(path.join(PUBLIC, "og.png")))
+    .digest("hex")
+    .slice(0, 8);
+  await expect(meta("og:image")).toHaveAttribute("content", `https://kazuhoshibuya.com/og.png?v=${version}`);
   await expect(meta("og:image:width")).toHaveAttribute("content", "1200");
   await expect(meta("og:image:height")).toHaveAttribute("content", "630");
   const [role, city] = (await page.locator(".hero .label").textContent()).split("·").map((part) => part.trim());
   await expect(meta("og:image:alt")).toHaveAttribute("content", `Kazuho Shibuya, ${role}, ${city}`);
   await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute("content", "summary_large_image");
+  await expect(page.locator('meta[name="author"]')).toHaveAttribute("content", "Kazuho Shibuya");
 
   const image = await request.get("/og.png");
+  const servedVersion = crypto
+    .createHash("sha256")
+    .update(await image.body())
+    .digest("hex")
+    .slice(0, 8);
+  expect(servedVersion, "the served image is the committed one").toBe(version);
   expect(image.headers()["content-type"]).toBe("image/png");
   const png = PNG.sync.read(await image.body());
   expect([png.width, png.height]).toEqual([1200, 630]);

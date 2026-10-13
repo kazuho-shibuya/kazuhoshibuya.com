@@ -3,7 +3,7 @@
   "private": true,
   "description": "Personal site of Kazuho Shibuya, served from Cloudflare.",
   "scripts": {
-    "build": "python3 scripts/build.py && node scripts/render-og.js",
+    "build": "python3 scripts/build.py && node scripts/render-og.js && python3 scripts/build.py",
     "test:unit": "python3 -m unittest discover tests",
     "lint": "uvx ruff@0.17.0 check scripts tests && uvx ruff@0.17.0 format --check scripts tests && prettier --check .",
     "format": "uvx ruff@0.17.0 format scripts tests && prettier --write .",

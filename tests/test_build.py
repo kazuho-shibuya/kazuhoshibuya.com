@@ -166,6 +166,19 @@ class IncludeTest(unittest.TestCase):
             build.include_files("{{include: missing.css}}")
 
 
+class ImageVersionTest(unittest.TestCase):
+    def test_the_version_is_the_start_of_the_sha256_and_changes_with_the_image(self):
+        folder = Path(self.id().replace(".", "_"))
+        folder.mkdir(exist_ok=True)
+        image = folder / "og.png"
+        self.addCleanup(lambda: image.unlink() or folder.rmdir())
+        image.write_bytes(b"first")
+        first = build.image_version(image)
+        image.write_bytes(b"second")
+        self.assertEqual(first, "a7937b64")
+        self.assertNotEqual(build.image_version(image), first)
+
+
 class CommittedPageTest(unittest.TestCase):
     def test_the_committed_page_matches_the_current_source_everywhere_but_the_placeholders(self):
         """CI cannot rebuild without the private source, so this catches a source edit that was never built."""

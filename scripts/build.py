@@ -13,6 +13,7 @@ SRC = ROOT / "src"
 TEMPLATE = SRC / "template.html"
 OUTPUT = ROOT / "public/index.html"
 HEADERS = ROOT / "public/_headers"
+PREVIEW_IMAGE = ROOT / "public/og.png"
 SOURCE = ROOT.parent / "life-tracker/projects/career/artefacts/linkedin.md"
 LONDON_COMPANIES = {"Ophelos"}
 
@@ -191,6 +192,11 @@ def render(template, data):
     return page
 
 
+def image_version(path):
+    """The first 8 hex characters of the file's sha256, so a changed image gets a new address."""
+    return hashlib.sha256(path.read_bytes()).hexdigest()[:8]
+
+
 def csp_hash(code):
     return "'sha256-" + base64.b64encode(hashlib.sha256(code.encode()).digest()).decode() + "'"
 
@@ -238,7 +244,9 @@ def main():
         return 1
     try:
         data = parse(SOURCE.read_text())
-        page = render(include_files(TEMPLATE.read_text()), data)
+        template = include_files(TEMPLATE.read_text())
+        template = template.replace("{{og_version}}", image_version(PREVIEW_IMAGE))
+        page = render(template, data)
         headers = headers_file(page)
         OUTPUT.write_text(page)
         HEADERS.write_text(headers)
