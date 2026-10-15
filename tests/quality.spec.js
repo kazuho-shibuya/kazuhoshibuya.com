@@ -95,6 +95,20 @@ test("shared links show a 1200x630 preview image with alt text", async ({ page, 
   expect(colours.size, "a blank image has one colour").toBeGreaterThan(10);
 });
 
+test("search results can show the sail from a 192px icon file", async ({ page, request }) => {
+  await open(page, DESKTOP);
+  await expect(page.locator('link[rel="icon"][type="image/png"]')).toHaveAttribute("href", "/favicon.png");
+  await expect(page.locator('link[rel="icon"][type="image/png"]')).toHaveAttribute("sizes", "192x192");
+
+  const icon = await request.get("/favicon.png");
+  expect(icon.headers()["content-type"]).toBe("image/png");
+  const png = PNG.sync.read(await icon.body());
+  expect([png.width, png.height]).toEqual([192, 192]);
+  const colours = new Set();
+  for (let i = 0; i < png.data.length; i += 4 * 7) colours.add(png.data.readUInt32BE(i));
+  expect(colours.size, "a blank image has one colour").toBeGreaterThan(2);
+});
+
 // Runs in the page: the width of an element's text, since a heading block is as wide as its container.
 function textWidth(element) {
   const range = document.createRange();

@@ -26,7 +26,7 @@ scripts/build.py           fills the template from the LinkedIn text; writes pub
 scripts/subset-jp-font.sh  rebuilds the Japanese font with only the characters the page uses
 public/                    the built page, its headers file and self-hosted fonts (generated, committed)
 public/robots.txt, sitemap.xml  written by hand: where search engines start
-scripts/render-og.js       renders public/og.png, the link-preview image, from the built page's header (on the Mac, then committed)
+scripts/render-og.js       renders public/og.png, the link-preview image, from the built page's header, and public/favicon.png, the icon search results show (on the Mac, then committed)
 tests/                     unit tests for the build, browser tests by concern, approved screenshots
 deploy.sh                  every check, deploy, then the browser checks against the live site
 ```
