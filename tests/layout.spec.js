@@ -78,7 +78,7 @@ test("phone: the focus line is three short lines with no dots", async ({ page })
 
 test("the tab icon and the header mark are the sail", async ({ page }) => {
   await open(page, DESKTOP);
-  await expect(page.locator('link[rel="icon"]')).toHaveAttribute("href", /^data:image\/svg\+xml,.*s-jib/);
+  await expect(page.locator('link[rel="icon"][type="image/svg+xml"]')).toHaveAttribute("href", /^data:image\/svg\+xml,.*s-jib/);
   await expect(page.locator(".hero .label .mark")).toBeVisible();
 });
 
