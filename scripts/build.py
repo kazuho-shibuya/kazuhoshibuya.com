@@ -5,6 +5,7 @@ import hashlib
 import html
 import os
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -14,7 +15,8 @@ TEMPLATE = SRC / "template.html"
 OUTPUT = ROOT / "public/index.html"
 HEADERS = ROOT / "public/_headers"
 PREVIEW_IMAGE = ROOT / "public/og.png"
-SOURCE = ROOT.parent / "life-tracker/projects/career/artefacts/linkedin.md"
+SOURCE_REPO = "kazuho-shibuya/life-tracker"
+SOURCE_PATH = "projects/career/artefacts/linkedin.md"
 LONDON_COMPANIES = {"Ophelos"}
 
 ROLE_HEADING = re.compile(
@@ -235,15 +237,24 @@ def headers_file(page):
     return "/*\n" + "".join(f"  {name}: {value}\n" for name, value in rules)
 
 
+def read_source():
+    """The LinkedIn text on life-tracker's main branch, so a local checkout that is behind cannot build an old page."""
+    result = subprocess.run(
+        ["gh", "api", "-H", "Accept: application/vnd.github.raw", f"repos/{SOURCE_REPO}/contents/{SOURCE_PATH}?ref=main"],
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        raise BuildError(f"could not read {SOURCE_PATH} from {SOURCE_REPO} main: {result.stderr.strip()[:200]}")
+    return result.stdout
+
+
 def main():
-    if not SOURCE.exists():
-        if os.environ.get("CI"):
-            print(f"skipped: {SOURCE.name} is private and not available in CI; checking the committed page")
-            return 0
-        print(f"missing {SOURCE}", file=sys.stderr)
-        return 1
+    if os.environ.get("CI"):
+        print("skipped: linkedin.md is private and not available in CI; checking the committed page")
+        return 0
     try:
-        data = parse(SOURCE.read_text())
+        data = parse(read_source())
         template = include_files(TEMPLATE.read_text())
         template = template.replace("{{og_version}}", image_version(PREVIEW_IMAGE))
         page = render(template, data)
