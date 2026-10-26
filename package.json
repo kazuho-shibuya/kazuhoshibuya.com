@@ -12,12 +12,12 @@
     "deploy": "./deploy.sh"
   },
   "devDependencies": {
-    "@axe-core/playwright": "^4.13.0",
-    "@playwright/test": "^1.64.0",
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.64.1",
     "fontkit": "^2.0.4",
-    "html-validate": "^11.16.2",
+    "html-validate": "^11.17.0",
     "pngjs": "^7.0.0",
     "prettier": "^3.9.10",
-    "wrangler": "^4.149.0"
+    "wrangler": "^4.152.0"
   }
 }
